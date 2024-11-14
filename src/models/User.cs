@@ -25,7 +25,7 @@ namespace api.src.models
         public List<Product> Products {get; } = [];
 
         public int RolId { get; set; } 
-        
-        public Rol Rol {get; set; } = null!; 
+
+        public Role Role {get; set; } = null!; 
     }
 }
