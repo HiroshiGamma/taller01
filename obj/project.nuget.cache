@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "ng6q7nX7rkY=",
+  "dgSpecHash": "9p/10nKJtTw=",
   "success": true,
   "projectFilePath": "C:\\Users\\bruno\\Documents\\IDWM\\Taller01_BM_FV\\api\\api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\bruno\\.nuget\\packages\\bogus\\35.6.1\\bogus.35.6.1.nupkg.sha512",
     "C:\\Users\\bruno\\.nuget\\packages\\dotnetenv\\3.1.1\\dotnetenv.3.1.1.nupkg.sha512",
     "C:\\Users\\bruno\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\bruno\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.8\\microsoft.aspnetcore.openapi.8.0.8.nupkg.sha512",

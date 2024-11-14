@@ -63,7 +63,7 @@ namespace api.src.data.migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -78,7 +78,7 @@ namespace api.src.data.migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Contraseña")
+                    b.Property<string>("Contrasena")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -97,15 +97,16 @@ namespace api.src.data.migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("RolId")
+                    b.Property<int>("RoleId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("RolesId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Rut")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RolesId");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
                 });
@@ -129,7 +130,7 @@ namespace api.src.data.migrations
                 {
                     b.HasOne("api.src.models.Role", "Roles")
                         .WithMany()
-                        .HasForeignKey("RolesId")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

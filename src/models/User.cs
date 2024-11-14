@@ -8,6 +8,8 @@ namespace api.src.models
     public class User
     {
         public int Id { get; set; } 
+        
+        public String Rut { get; set; } = string.Empty;
 
         public String Nombre { get; set; } = string.Empty; 
 
@@ -17,14 +19,14 @@ namespace api.src.models
 
         public String Genero { get; set; } = string.Empty;
 
-        public String Contraseña { get; set; } = string.Empty;
+        public String Contrasena { get; set; } = string.Empty;
 
 
         // Entityframework relationship
 
         public List<Product> Products {get; } = [];
 
-        public int RolId { get; set; } 
+        public int RoleId { get; set; } 
 
         public Role Roles {get; set; } = null!; 
     }
