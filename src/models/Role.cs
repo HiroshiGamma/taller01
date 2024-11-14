@@ -7,6 +7,10 @@ namespace api.src.models
 {
     public class Role
     {
+        public int Id { get; set; }
+
+        public String name { get; set; } = string.Empty;
+
         
     }
 }
