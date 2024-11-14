@@ -17,5 +17,8 @@ namespace api.src.models
         public int Precio { get; set; }
 
         public int Stock { get; set; }
+
+        public List<User> Users {get;} = [];
+        
     }
 }

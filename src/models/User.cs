@@ -26,6 +26,6 @@ namespace api.src.models
 
         public int RolId { get; set; } 
 
-        public Role Role {get; set; } = null!; 
+        public Role Roles {get; set; } = null!; 
     }
 }
