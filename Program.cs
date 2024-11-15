@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 string connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? "Data Source-app.db";
 builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlite(connectionString));
-
+builder.Services.AddControllers();
 var app = builder.Build();  
 
 using ( var scope = app.Services.CreateScope()){
@@ -29,5 +29,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.MapControllers();
 app.UseHttpsRedirection();
 app.Run();

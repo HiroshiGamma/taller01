@@ -7,7 +7,7 @@ using api.src.data;
 
 #nullable disable
 
-namespace api.src.data.migrations
+namespace api.src.Data.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
     partial class ApplicationDBContextModelSnapshot : ModelSnapshot
@@ -86,12 +86,14 @@ namespace api.src.data.migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("EstadoId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("FechaNacimiento")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Genero")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("GenderId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -106,9 +108,43 @@ namespace api.src.data.migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EstadoId");
+
+                    b.HasIndex("GenderId");
+
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("taller01.src.models.Estado", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Estados");
+                });
+
+            modelBuilder.Entity("taller01.src.models.Gender", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genders");
                 });
 
             modelBuilder.Entity("ProductUser", b =>
@@ -128,13 +164,29 @@ namespace api.src.data.migrations
 
             modelBuilder.Entity("api.src.models.User", b =>
                 {
-                    b.HasOne("api.src.models.Role", "Roles")
+                    b.HasOne("taller01.src.models.Estado", "estado")
+                        .WithMany()
+                        .HasForeignKey("EstadoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("taller01.src.models.Gender", "gender")
+                        .WithMany()
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("api.src.models.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Roles");
+                    b.Navigation("Role");
+
+                    b.Navigation("estado");
+
+                    b.Navigation("gender");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using taller01.src.models;
 
 namespace api.src.models
 {
@@ -17,10 +18,8 @@ namespace api.src.models
 
         public String Correo { get; set; } = string.Empty;
 
-        public String Genero { get; set; } = string.Empty;
-
         public String Contrasena { get; set; } = string.Empty;
-
+        
 
         // Entityframework relationship
 
@@ -28,6 +27,12 @@ namespace api.src.models
 
         public int RoleId { get; set; } 
 
-        public Role Roles {get; set; } = null!; 
+        public Role Role {get; set; } = null!; 
+
+        public int EstadoId {get; set;}
+        public Estado estado {get; set;} = null!;
+
+        public int GenderId {get; set;}
+        public Gender gender {get; set;} = null!;
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.src.models;
 using Bogus;
+using taller01.src.models;
 
 namespace api.src.data
 {
@@ -30,6 +31,43 @@ namespace api.src.data
                     );
                     context.SaveChanges();
                 }
+                if (!context.Estados.Any()) 
+                {
+                    context.Estados.AddRange(
+                        new Estado
+                        {
+                            Name = "Habilitado"
+                        },
+                        new Estado
+                        {
+                            Name = "Deshabilitado"
+                        }
+                    );
+                    context.SaveChanges();
+                }
+
+                if (!context.Genders.Any()) 
+                {
+                    context.Genders.AddRange(
+                        new Gender
+                        {
+                            Name = "Femenino"
+                        },
+                        new Gender
+                        {
+                            Name = "Masculino"
+                        },
+                        new Gender
+                        {
+                            Name = "Prefiero no decirlo"
+                        },
+                        new Gender
+                        {
+                            Name = "Otro"
+                        }
+                    );
+                    context.SaveChanges();
+                }
 
                 var existingRuts = new HashSet<string>();
 
@@ -40,9 +78,10 @@ namespace api.src.data
                         .RuleFor(u => u.Rut, f => GenerateUniqueRandomRut(existingRuts))
                         .RuleFor(u => u.FechaNacimiento, f => f.Date.Past(30, DateTime.Today))
                         .RuleFor(u => u.Correo, f => f.Internet.Email())
-                        .RuleFor(u => u.Genero, f => f.PickRandom(new[] { "Femenino", "Masculino", "Prefiero no decirlo", "Otro" }))
                         .RuleFor(u => u.Contrasena, f => f.Internet.Password(8))
-                        .RuleFor(u => u.RoleId, f => f.PickRandom(new[] { 1, 2 }));
+                        .RuleFor(u => u.RoleId, f => f.PickRandom(new[] { 1, 2 }))
+                        .RuleFor(u => u.EstadoId, f => f.PickRandom(new[] { 1, 2 }))
+                        .RuleFor(u => u.GenderId, f => f.PickRandom(new[] { 1, 2, 3, 4}));
 
                     var users = userFaker.Generate(10);
                     context.Users.AddRange(users);
