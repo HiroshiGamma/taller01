@@ -24,15 +24,20 @@ namespace api.src.models
         // Entityframework relationship
 
         public List<Product> Products {get; } = [];
+        public List<Receipt> Receipts {get; } = [];
+        
 
         public int RoleId { get; set; } 
 
         public Role Role {get; set; } = null!; 
 
         public int EstadoId {get; set;}
-        public Estado estado {get; set;} = null!;
+        public Estado Estado {get; set;} = null!;
 
         public int GenderId {get; set;}
-        public Gender gender {get; set;} = null!;
+        public Gender Gender {get; set;} = null!;
+
+        public int ReceiptId {get; set;}
+        public Receipt Receipt {get; set;} = null!;
     }
 }
