@@ -36,8 +36,5 @@ namespace api.src.models
 
         public int GenderId {get; set;}
         public Gender Gender {get; set;} = null!;
-
-        public int ReceiptId {get; set;}
-        public Receipt Receipt {get; set;} = null!;
     }
 }

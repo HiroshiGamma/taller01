@@ -9,11 +9,17 @@ namespace taller01.src.models
     public class Receipt
     {
         public int Id {get; set;}
+
+        public DateTime Date { get; internal set; }
         
         
         //entityframework relationship
 
-        List<Product> Products {get; set;} = [];
+        public int UserId {get; set;}
+
+        public User User {get; set;} = null!;
+        
+        public List<Product> Products {get; set;} = [];
 
         
     }

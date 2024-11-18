@@ -31,6 +31,8 @@ namespace api.src.data
                     );
                     context.SaveChanges();
                 }
+
+
                 if (!context.Estados.Any()) 
                 {
                     context.Estados.AddRange(
@@ -102,9 +104,29 @@ namespace api.src.data
                     Console.WriteLine("Productos agregados al contexto.");
                 }
 
+                if(!context.Receipts.Any())
+                {
+                    var receiptFaker = new Faker<Receipt>()
+                        .RuleFor(r => r.Date, f => f.Date.Recent())
+                        .RuleFor(r => r.UserId, f => f.PickRandom(context.Users.Select(u => u.Id).ToList()));
+
+                    var receipts = receiptFaker.Generate(10);
+
+                    foreach (var receipt in receipts)
+                    {
+                        var productIds = context.Products.Select(p => p.Id).ToList();
+                        var randomProductIds = productIds.OrderBy(x => Guid.NewGuid()).Take(3).ToList();
+                        receipt.Products = context.Products.Where(p => randomProductIds.Contains(p.Id)).ToList();
+                    }
+
+                    context.Receipts.AddRange(receipts);
+                    context.SaveChanges();
+                }
+
                 context.SaveChanges();
             }
 
+          
             
         }
 
@@ -148,4 +170,5 @@ namespace api.src.data
             return mod.ToString()[0];
         }
     }
+
 }

@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace api.src.Data.migrations
+namespace api.src.data.migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Seeders : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,22 +38,6 @@ namespace api.src.Data.migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nombre = table.Column<string>(type: "TEXT", nullable: false),
-                    Tipo = table.Column<string>(type: "TEXT", nullable: false),
-                    Precio = table.Column<int>(type: "INTEGER", nullable: false),
-                    Stock = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Products", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
@@ -64,6 +48,86 @@ namespace api.src.Data.migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Rut = table.Column<string>(type: "TEXT", nullable: false),
+                    Nombre = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Correo = table.Column<string>(type: "TEXT", nullable: false),
+                    Contrasena = table.Column<string>(type: "TEXT", nullable: false),
+                    RoleId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EstadoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    GenderId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Estados_EstadoId",
+                        column: x => x.EstadoId,
+                        principalTable: "Estados",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Users_Genders_GenderId",
+                        column: x => x.GenderId,
+                        principalTable: "Genders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Receipts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Receipts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Receipts_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nombre = table.Column<string>(type: "TEXT", nullable: false),
+                    Tipo = table.Column<string>(type: "TEXT", nullable: false),
+                    Precio = table.Column<int>(type: "INTEGER", nullable: false),
+                    Stock = table.Column<int>(type: "INTEGER", nullable: false),
+                    ReceiptId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_Receipts_ReceiptId",
+                        column: x => x.ReceiptId,
+                        principalTable: "Receipts",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -82,65 +146,18 @@ namespace api.src.Data.migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductUser_Users_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Receipts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Receipts", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Rut = table.Column<string>(type: "TEXT", nullable: false),
-                    Nombre = table.Column<string>(type: "TEXT", nullable: false),
-                    FechaNacimiento = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Correo = table.Column<string>(type: "TEXT", nullable: false),
-                    Contrasena = table.Column<string>(type: "TEXT", nullable: false),
-                    RoleId = table.Column<int>(type: "INTEGER", nullable: false),
-                    EstadoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    GenderId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ReceiptId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_Estados_EstadoId",
-                        column: x => x.EstadoId,
-                        principalTable: "Estados",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Users_Genders_GenderId",
-                        column: x => x.GenderId,
-                        principalTable: "Genders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Users_Receipts_ReceiptId",
-                        column: x => x.ReceiptId,
-                        principalTable: "Receipts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Users_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_ReceiptId",
+                table: "Products",
+                column: "ReceiptId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductUser_UsersId",
@@ -163,43 +180,22 @@ namespace api.src.Data.migrations
                 column: "GenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_ReceiptId",
-                table: "Users",
-                column: "ReceiptId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ProductUser_Users_UsersId",
-                table: "ProductUser",
-                column: "UsersId",
-                principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Receipts_Users_UserId",
-                table: "Receipts",
-                column: "UserId",
-                principalTable: "Users",
-                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Receipts_Users_UserId",
-                table: "Receipts");
-
             migrationBuilder.DropTable(
                 name: "ProductUser");
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Receipts");
 
             migrationBuilder.DropTable(
                 name: "Users");
@@ -209,9 +205,6 @@ namespace api.src.Data.migrations
 
             migrationBuilder.DropTable(
                 name: "Genders");
-
-            migrationBuilder.DropTable(
-                name: "Receipts");
 
             migrationBuilder.DropTable(
                 name: "Roles");

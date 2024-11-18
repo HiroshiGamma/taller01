@@ -22,11 +22,31 @@ namespace api.src.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetAll([FromQuery] int? age = null, [FromQuery] string? gender = null, [FromQuery] string? estado = null)
         {
-            var users = _context.Users
-                            .Include(u => u.Role)
-                            .ToList().Select(u => u.ToUserDto());
+            var query = _context.Users
+                                .Include(u => u.Role)
+                                .Include(u => u.Gender)
+                                .Include(u => u.Estado)
+                                .AsQueryable();
+
+            if (age.HasValue)
+            {
+                var birthDate = DateTime.Now.AddYears(-age.Value);
+                query = query.Where(x => x.FechaNacimiento.Year == birthDate.Year);
+            }
+
+            if (!string.IsNullOrEmpty(gender))
+            {
+                query = query.Where(x => x.Gender.Name == gender);
+            }
+
+            if (!string.IsNullOrEmpty(estado))
+            {
+                query = query.Where(x => x.Estado.Name == estado);
+            }
+
+            var users = query.ToList();
 
             return Ok(users);
         }
@@ -35,8 +55,24 @@ namespace api.src.Controllers
         public IActionResult GetById([FromRoute] int id)
         {
             var user = _context.Users
+                               .Include(u => u.Role)
+                               .Include(u => u.Gender)
+                               .Include(u => u.Estado)
+                               .FirstOrDefault(x => x.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
+
+        [HttpGet("rut/{rut}")]
+        public IActionResult GetByRut([FromRoute] string rut)
+        {
+            var user = _context.Users
                             .Include(u => u.Role)
-                            .FirstOrDefault(x => x.Id == id);
+                            .FirstOrDefault(x => x.Rut == rut);
 
             if (user == null)
             {

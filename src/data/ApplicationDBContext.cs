@@ -16,5 +16,6 @@ namespace api.src.data
         public DbSet<Receipt> Receipts {get; set;} = null!;
         public DbSet<Estado> Estados {get; set;} = null!;
         public DbSet<Gender> Genders {get; set;} = null!;
+
     }
 }

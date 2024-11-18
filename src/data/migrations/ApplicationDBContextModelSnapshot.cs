@@ -7,7 +7,7 @@ using api.src.data;
 
 #nullable disable
 
-namespace api.src.Data.migrations
+namespace api.src.data.migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
     partial class ApplicationDBContextModelSnapshot : ModelSnapshot
@@ -45,6 +45,9 @@ namespace api.src.Data.migrations
                     b.Property<int>("Precio")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ReceiptId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Stock")
                         .HasColumnType("INTEGER");
 
@@ -53,6 +56,8 @@ namespace api.src.Data.migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ReceiptId");
 
                     b.ToTable("Products");
                 });
@@ -99,9 +104,6 @@ namespace api.src.Data.migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ReceiptId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("RoleId")
                         .HasColumnType("INTEGER");
 
@@ -114,8 +116,6 @@ namespace api.src.Data.migrations
                     b.HasIndex("EstadoId");
 
                     b.HasIndex("GenderId");
-
-                    b.HasIndex("ReceiptId");
 
                     b.HasIndex("RoleId");
 
@@ -158,7 +158,10 @@ namespace api.src.Data.migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UserId")
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -183,6 +186,13 @@ namespace api.src.Data.migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("api.src.models.Product", b =>
+                {
+                    b.HasOne("taller01.src.models.Receipt", null)
+                        .WithMany("Products")
+                        .HasForeignKey("ReceiptId");
+                });
+
             modelBuilder.Entity("api.src.models.User", b =>
                 {
                     b.HasOne("taller01.src.models.Estado", "Estado")
@@ -197,12 +207,6 @@ namespace api.src.Data.migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("taller01.src.models.Receipt", "Receipt")
-                        .WithMany()
-                        .HasForeignKey("ReceiptId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("api.src.models.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
@@ -213,21 +217,28 @@ namespace api.src.Data.migrations
 
                     b.Navigation("Gender");
 
-                    b.Navigation("Receipt");
-
                     b.Navigation("Role");
                 });
 
             modelBuilder.Entity("taller01.src.models.Receipt", b =>
                 {
-                    b.HasOne("api.src.models.User", null)
+                    b.HasOne("api.src.models.User", "User")
                         .WithMany("Receipts")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("api.src.models.User", b =>
                 {
                     b.Navigation("Receipts");
+                });
+
+            modelBuilder.Entity("taller01.src.models.Receipt", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
