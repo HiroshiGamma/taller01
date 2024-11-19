@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.src.data;
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Mvc;
 using taller01.src.Mappers;
 
@@ -12,10 +13,12 @@ namespace taller01.src.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-         private readonly ApplicationDBContext _context;
-        public ProductController(ApplicationDBContext context)
+        private readonly ApplicationDBContext _context;
+        private readonly Cloudinary _cloudinary;
+        public ProductController(ApplicationDBContext context, Cloudinary cloudinary)
         {
             _context = context;
+            _cloudinary = cloudinary;
         }
     
     [HttpGet]
@@ -69,4 +72,5 @@ namespace taller01.src.Controllers
         return Ok("Product added to cart.");
     }
     }
+    
 }

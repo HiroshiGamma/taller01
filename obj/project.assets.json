@@ -15,6 +15,24 @@
           }
         }
       },
+      "CloudinaryDotNet/1.26.2": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3",
+          "System.Net.Http": "4.3.4",
+          "System.Text.RegularExpressions": "4.3.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/CloudinaryDotNet.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/CloudinaryDotNet.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "DotNetEnv/3.1.1": {
         "type": "package",
         "dependencies": {
@@ -789,6 +807,19 @@
           "System.Threading.Timer": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0",
           "System.Xml.XDocument": "4.3.0"
+        }
+      },
+      "Newtonsoft.Json/13.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
+            "related": ".xml"
+          }
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {
@@ -2513,6 +2544,25 @@
         "lib/netstandard2.0/Bogus.xml"
       ]
     },
+    "CloudinaryDotNet/1.26.2": {
+      "sha512": "JUDOUKa7T+h0nmMhBdBxCkCldN4/DIZLOlh5p30KrcBX6Spral6vxTWhzk6OH2pGd8MGL5R379EsK7tJr/IQpw==",
+      "type": "package",
+      "path": "cloudinarydotnet/1.26.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "CloudinaryIcon.png",
+        "README.md",
+        "cloudinarydotnet.1.26.2.nupkg.sha512",
+        "cloudinarydotnet.nuspec",
+        "lib/net452/CloudinaryDotNet.dll",
+        "lib/net452/CloudinaryDotNet.xml",
+        "lib/netstandard1.3/CloudinaryDotNet.dll",
+        "lib/netstandard1.3/CloudinaryDotNet.xml",
+        "lib/netstandard2.0/CloudinaryDotNet.dll",
+        "lib/netstandard2.0/CloudinaryDotNet.xml"
+      ]
+    },
     "DotNetEnv/3.1.1": {
       "sha512": "o4SqUVCq0pqHF/HYsZk6k22XGIVmvsDVo+Dy7l0ubq9uQ45JkXswrMRJmYvhGLXWFYF0M5OupMonytB+0zvpGQ==",
       "type": "package",
@@ -3879,6 +3929,36 @@
         "dotnet_library_license.txt",
         "netstandard.library.1.6.1.nupkg.sha512",
         "netstandard.library.nuspec"
+      ]
+    },
+    "Newtonsoft.Json/13.0.3": {
+      "sha512": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ==",
+      "type": "package",
+      "path": "newtonsoft.json/13.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "README.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/net6.0/Newtonsoft.Json.dll",
+        "lib/net6.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "newtonsoft.json.13.0.3.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "packageIcon.png"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {
@@ -7686,6 +7766,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Bogus >= 35.6.1",
+      "CloudinaryDotNet >= 1.26.2",
       "DotNetEnv >= 3.1.1",
       "Microsoft.AspNetCore.OpenApi >= 8.0.8",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.4",
@@ -7695,24 +7776,26 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\bruno\\.nuget\\packages\\": {}
+    "C:\\Users\\Usuario\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\bruno\\Documents\\IDWM\\Taller01_BM_FV\\api\\api.csproj",
+      "projectUniqueName": "C:\\Users\\Usuario\\Documents\\GitHub\\taller01\\api.csproj",
       "projectName": "api",
-      "projectPath": "C:\\Users\\bruno\\Documents\\IDWM\\Taller01_BM_FV\\api\\api.csproj",
-      "packagesPath": "C:\\Users\\bruno\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\bruno\\Documents\\IDWM\\Taller01_BM_FV\\api\\obj\\",
+      "projectPath": "C:\\Users\\Usuario\\Documents\\GitHub\\taller01\\api.csproj",
+      "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Usuario\\Documents\\GitHub\\taller01\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\bruno\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -7739,6 +7822,10 @@
           "Bogus": {
             "target": "Package",
             "version": "[35.6.1, )"
+          },
+          "CloudinaryDotNet": {
+            "target": "Package",
+            "version": "[1.26.2, )"
           },
           "DotNetEnv": {
             "target": "Package",
