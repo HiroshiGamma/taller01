@@ -19,12 +19,54 @@ namespace taller01.src.Controllers
         }
     
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult Get(string? searchText, string? type, string? order)
     {
-        var products = _context.Products.ToList().Select(p=>p.ToProductDto());
+        var productsQuery = _context.Products.AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchText))
+        {
+            productsQuery = productsQuery.Where(p => p.Nombre.Contains(searchText));
+        }
+
+        if (!string.IsNullOrEmpty(type))
+        {
+            productsQuery = productsQuery.Where(p => p.Tipo == type);
+        }
+
+        if (order == "asc")
+        {
+            productsQuery = productsQuery.OrderBy(p => p.Precio);
+        }
+        else if (order == "desc")
+        {
+            productsQuery = productsQuery.OrderByDescending(p => p.Precio);
+        }
+
+        var products = productsQuery
+            .Where(p => p.Stock > 0)
+            .ToList()
+            .Select(p => p.ToProductDto());
+
         return Ok(products);
     }
-    
 
+    [HttpPost("add-to-cart")]
+    public IActionResult AddToCart(int productId, int userId)
+    {
+        var user = _context.Users.Find(userId);
+        var product = _context.Products.Find(productId);
+
+        if (user == null || product == null || product.Stock <= 0)
+        {
+            return BadRequest("Invalid user or product, or product out of stock.");
+        }
+
+        user.Products.Add(product);
+        product.Stock--;
+
+        _context.SaveChanges();
+
+        return Ok("Product added to cart.");
+    }
     }
 }

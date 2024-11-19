@@ -23,8 +23,8 @@ namespace api.src.models
 
         // Entityframework relationship
 
-        public List<Product> Products {get; } = [];
-        public List<Receipt> Receipts {get; } = [];
+        public List<Product> Products {get; } = new List<Product>();
+        public List<Receipt> Receipts {get; } = new List<Receipt>();
         
 
         public int RoleId { get; set; } 

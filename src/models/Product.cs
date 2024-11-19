@@ -18,7 +18,7 @@ namespace api.src.models
 
         public int Stock { get; set; }
 
-        public List<User> Users {get;} = [];
+        public List<User> Users {get;} = new List<User>();
         
     }
 }
