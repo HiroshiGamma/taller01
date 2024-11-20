@@ -10,7 +10,8 @@ namespace taller01.src.Interfaces
     public interface IUserRepository
     {
         Task<List<User>> GetAll();
-        Task<User?> GetById();
+        Task<User?> GetById(int id);
+        IQueryable<User> GetAsQuery(int? age, string? gender, string? estado);
         Task<User?> Post(User user);
         Task<User?> Put(int id, UserDto userDto);
         Task<User?> Delete(int id);   

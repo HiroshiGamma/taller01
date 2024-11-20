@@ -10,7 +10,8 @@ namespace taller01.src.Interfaces
     public interface IProductRepository
     {
         Task<List<Product>> GetAll();
-        Task<Product?> GetById();
+        IQueryable<Product> GetAsQuery(string? searchText, string? type, string? order);
+        Task<Product?> GetById(int id);
         Task<Product?> Post(Product product);
         Task<Product?> Put(int id, ProductDto productDto);
         Task<Product?> Delete(int id);

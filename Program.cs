@@ -3,6 +3,8 @@ using CloudinaryDotNet;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using taller01.src.Helpers;
+using taller01.src.Interfaces;
+using taller01.src.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ builder.Services.AddSingleton(cloudinary);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 string connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? "Data Source-app.db";
 builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlite(connectionString));
