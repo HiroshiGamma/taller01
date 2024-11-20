@@ -9,11 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
-var cloudinarySettings = builder.Configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>();
+var cloudinaryName = Environment.GetEnvironmentVariable("CloudinaryName");
+var cloudinaryKey = Environment.GetEnvironmentVariable("ApiKey");
+var cloudinarySecret = Environment.GetEnvironmentVariable("ApiSecret");
     var cloudinaryAccount = new Account(
-        cloudinarySettings!.CloudName,
-        cloudinarySettings.ApiKey,
-        cloudinarySettings.ApiSecret
+        cloudinaryName,
+        cloudinaryKey,
+        cloudinarySecret
     );
 var cloudinary = new Cloudinary(cloudinaryAccount);
 builder.Services.AddSingleton(cloudinary);

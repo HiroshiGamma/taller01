@@ -1,0 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using api.src.models;
+using taller01.src.Dtos;
+
+namespace taller01.src.Interfaces
+{
+    public interface IProductRepository
+    {
+        Task<List<Product>> GetAll();
+        Task<Product?> GetById();
+        Task<Product?> Post(Product product);
+        Task<Product?> Put(int id, ProductDto productDto);
+        Task<Product?> Delete(int id);
+
+    }
+}
