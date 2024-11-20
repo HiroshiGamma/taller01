@@ -18,10 +18,25 @@ namespace taller01.src.Mappers
                 Rut = userModel.Rut,
                 FechaNacimiento = userModel.FechaNacimiento,
                 Correo = userModel.Correo, 
+                Contrasena = userModel.Contrasena,
                 GenderId = userModel.GenderId,
                 EstadoId = userModel.EstadoId
               };
         }
-    
+        public static User ToUser(this UserDto userDto) 
+        {
+            return new User
+            {
+                Id = userDto.Id,
+                Nombre = userDto.Nombre,
+                Rut = userDto.Rut,
+                FechaNacimiento = userDto.FechaNacimiento,
+                Correo = userDto.Correo, 
+                Contrasena = userDto.Contrasena,
+                GenderId = userDto.GenderId,
+                EstadoId = userDto.EstadoId, 
+                RoleId = 2  
+            };
+        }
     }
 }

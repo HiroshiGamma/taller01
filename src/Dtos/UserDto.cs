@@ -15,7 +15,7 @@ namespace taller01.src.Dtos
         public DateTime FechaNacimiento { get; set; }
 
         public String Correo { get; set; } = string.Empty;
-
+        public String Contrasena {get; set;} = string.Empty;
         public int GenderId {get; set;}
 
         public int EstadoId {get; set;}

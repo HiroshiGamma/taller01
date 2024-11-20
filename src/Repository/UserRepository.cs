@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using api.src.data;
 using api.src.models;
@@ -17,6 +18,19 @@ namespace taller01.src.Repository
         {
             _context = context;
         }
+
+        public async Task<Product> AddProductToUser(int id, Product product)
+        {
+            var userModel = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if (userModel == null)
+            {
+                throw new Exception("User not found");
+            }
+            userModel.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return product;
+        }
+
         public async Task<User?> Delete(int id)
         {
             var userModel = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
@@ -51,22 +65,23 @@ namespace taller01.src.Repository
             return user;
         }
 
-        public async Task<User?> Put(int id, UserDto userDto)
+        public async Task<User?> Put(int id, UpdateUserDto updateUserDto)
         {
             var userModel = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
             if (userModel == null)
             {
                 throw new Exception("User not found");
             }
-            userDto.Nombre = userModel.Nombre;
-            userDto.Rut = userModel.Rut;
-            userDto.FechaNacimiento = userModel.FechaNacimiento;
-            userDto.Correo = userModel.Correo;
-            userDto.GenderId = userModel.GenderId;
-            userDto.EstadoId = userModel.EstadoId;
+            userModel.Nombre = updateUserDto.Nombre;
+            userModel.FechaNacimiento = updateUserDto.FechaNacimiento;
+            userModel.GenderId = updateUserDto.GenderId;
 
             await _context.SaveChangesAsync();
             return userModel;
+        }
+        public async Task<User?> GetByRut(string rut) 
+        {
+            return await _context.Users.FindAsync(rut);
         }
     }
 }

@@ -8,11 +8,11 @@ using api.src.data;
 
 #nullable disable
 
-namespace api.src.data.migrations
+namespace api.src.Data.migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20241118011009_Seeders")]
-    partial class Seeders
+    [Migration("20241120030647_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

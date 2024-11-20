@@ -7,7 +7,7 @@ using api.src.data;
 
 #nullable disable
 
-namespace api.src.data.migrations
+namespace api.src.Data.migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
     partial class ApplicationDBContextModelSnapshot : ModelSnapshot

@@ -7,6 +7,8 @@ using api.src.models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using taller01.src.Dtos;
+using taller01.src.Interfaces;
 using taller01.src.Mappers;
 
 namespace api.src.Controllers
@@ -15,20 +17,16 @@ namespace api.src.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly ApplicationDBContext _context;
-        public UserController(ApplicationDBContext context)
+        private readonly IUserRepository _userRepository;
+        public UserController(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
         public IActionResult GetAll([FromQuery] int? age = null, [FromQuery] string? gender = null, [FromQuery] string? estado = null)
         {
-            var query = _context.Users
-                                .Include(u => u.Role)
-                                .Include(u => u.Gender)
-                                .Include(u => u.Estado)
-                                .AsQueryable();
+            var query = _userRepository.GetAsQuery(age, gender, estado);
 
             if (age.HasValue)
             {
@@ -54,11 +52,7 @@ namespace api.src.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById([FromRoute] int id)
         {
-            var user = _context.Users
-                               .Include(u => u.Role)
-                               .Include(u => u.Gender)
-                               .Include(u => u.Estado)
-                               .FirstOrDefault(x => x.Id == id);
+            var user = _userRepository.GetById(id);
 
             if (user == null)
             {
@@ -70,9 +64,7 @@ namespace api.src.Controllers
         [HttpGet("rut/{rut}")]
         public IActionResult GetByRut([FromRoute] string rut)
         {
-            var user = _context.Users
-                            .Include(u => u.Role)
-                            .FirstOrDefault(x => x.Rut == rut);
+            var user = _userRepository.GetByRut(rut);
 
             if (user == null)
             {
@@ -82,78 +74,44 @@ namespace api.src.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] User user)
+        public async Task<IActionResult> Post([FromBody] UserDto userDto)
         {
-            var role = _context.Roles
-                            .FirstOrDefault(r => r.Id == user.RoleId);
 
-            if (role == null)
-            {
-                return NotFound("Role not found");
-            }
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-            return Ok(user);
+            var user = userDto.ToUser();
+            await _userRepository.Post(user);
+            
+            return CreatedAtAction(nameof(GetById), new {id = user.Id}, user.ToUserDto());
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute] int id, [FromBody] User user)
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UpdateUserDto updateUserDto)
         {
-            var existingUser = _context.Users
-                                    .FirstOrDefault(x => x.Id == id);
-
-            if (existingUser == null)
+            var userModel = await _userRepository.Put(id, updateUserDto);
+            if (userModel == null) 
             {
-                return NotFound("User not found");
+                return NotFound();
             }
-
-            var role = _context.Roles
-                        .FirstOrDefault(r => r.Id == user.RoleId);
-
-            if (role == null)
-            {
-                return NotFound("Role not found");
-            }
-
-            existingUser.Nombre = user.Nombre;
-            existingUser.Correo = user.Correo;
-            existingUser.RoleId = user.RoleId;
-
-            _context.Users.Update(existingUser);
-            _context.SaveChanges();
-            return Ok(existingUser);
+            return Ok(userModel);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id)
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var user = _context.Users
-                            .Include(u => u.Role)
-                            .FirstOrDefault(x => x.Id == id);
+            var userModel = await _userRepository.Delete(id);
 
-            if (user == null)
+            if (userModel == null)
             {
                 return NotFound("User not found");
-            }
-
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-            return Ok("User deleted");
+            }            
+            return NoContent();
         }
 
         [HttpPost("withCookie")]
-        public IActionResult PostByCookie([FromBody] User user)
+        public async Task<IActionResult> PostByCookie([FromBody] UserDto userDto)
         {
-            // Verificar si el RoleId proporcionado es válido
-            var role = _context.Roles.FirstOrDefault(r => r.Id == user.RoleId);
-            if (role == null)
-            {
-                return NotFound("Role not found");
-            }
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            var user = userDto.ToUser();
+            await _userRepository.Post(user);
 
             Response.Cookies.Append("UserId", user.Id.ToString(), new CookieOptions
             {
@@ -165,11 +123,11 @@ namespace api.src.Controllers
         }
 
         [HttpGet("me")]
-        public IActionResult GetCurrentUser()
+        public async Task<IActionResult> GetCurrentUser()
         {
             if (Request.Cookies.TryGetValue("UserId", out var userId))
             {
-                var user = _context.Users.Include(u => u.Role).FirstOrDefault(x => x.Id == int.Parse(userId));
+                var user = await _userRepository.GetById(int.Parse(userId));
                 if (user == null)
                 {
                     return NotFound("User not found");
