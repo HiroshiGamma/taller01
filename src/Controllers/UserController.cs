@@ -31,7 +31,7 @@ namespace api.src.Controllers
             if (age.HasValue)
             {
                 var birthDate = DateTime.Now.AddYears(-age.Value);
-                query = query.Where(x => x.FechaNacimiento.Year == birthDate.Year);
+                query = query.Where(x => x.Birthdate.Year == birthDate.Year);
             }
 
             if (!string.IsNullOrEmpty(gender))
@@ -41,7 +41,7 @@ namespace api.src.Controllers
 
             if (!string.IsNullOrEmpty(estado))
             {
-                query = query.Where(x => x.Estado.Name == estado);
+                query = query.Where(x => x.Status.Name == estado);
             }
 
             var users = query.ToList();
@@ -50,9 +50,9 @@ namespace api.src.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var user = _userRepository.GetById(id);
+            var user = await _userRepository.GetById(id);
 
             if (user == null)
             {
@@ -62,9 +62,9 @@ namespace api.src.Controllers
         }
 
         [HttpGet("rut/{rut}")]
-        public IActionResult GetByRut([FromRoute] string rut)
+        public async Task<IActionResult> GetByRut([FromRoute] string rut)
         {
-            var user = _userRepository.GetByRut(rut);
+            var user = await _userRepository.GetByRut(rut);
 
             if (user == null)
             {
@@ -83,7 +83,8 @@ namespace api.src.Controllers
             return CreatedAtAction(nameof(GetById), new {id = user.Id}, user.ToUserDto());
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
+        [Route("{id:int}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UpdateUserDto updateUserDto)
         {
             var userModel = await _userRepository.Put(id, updateUserDto);

@@ -10,11 +10,11 @@ namespace api.src.models
         
         public int Id { get; set; } 
 
-        public String Nombre { get; set; } = string.Empty;
+        public String Name { get; set; } = string.Empty;
 
-        public String Tipo { get; set; } = string.Empty;
+        public String Type { get; set; } = string.Empty;
 
-        public int Precio { get; set; }
+        public int Price { get; set; }
 
         public int Stock { get; set; }
 

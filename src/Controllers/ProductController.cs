@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.src.data;
+using api.src.Dtos;
+using api.src.Mappers;
 using api.src.models;
 using CloudinaryDotNet;
 using Microsoft.AspNetCore.Mvc;
@@ -33,21 +35,21 @@ namespace taller01.src.Controllers
 
         if (!string.IsNullOrEmpty(searchText))
         {
-            productsQuery = productsQuery.Where(p => p.Nombre.Contains(searchText));
+            productsQuery = productsQuery.Where(p => p.Name.Contains(searchText));
         }
 
         if (!string.IsNullOrEmpty(type))
         {
-            productsQuery = productsQuery.Where(p => p.Tipo == type);
+            productsQuery = productsQuery.Where(p => p.Type == type);
         }
 
         if (order == "asc")
         {
-            productsQuery = productsQuery.OrderBy(p => p.Precio);
+            productsQuery = productsQuery.OrderBy(p => p.Price);
         }
         else if (order == "desc")
         {
-            productsQuery = productsQuery.OrderByDescending(p => p.Precio);
+            productsQuery = productsQuery.OrderByDescending(p => p.Price);
         }
 
         var products = productsQuery
@@ -57,6 +59,45 @@ namespace taller01.src.Controllers
 
         return Ok(products);
     }
+
+
+    [HttpPost]
+    public IActionResult post([FromBody] CreateProductDto createProductDto)
+    {
+        var product = createProductDto.ToProductFromCreateDto();
+        _productRepository.Post(product);
+        return CreatedAtAction(nameof(Get), new { id = product.Id }, product.ToProductDto());
+    }
+
+    [HttpPut]
+    [Route("{id:int}")]
+    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UpdateProductDto updateProductDto)
+    {
+        var productModel = await _productRepository.Put(id, updateProductDto);
+        if (productModel == null)
+        {
+            return NotFound();
+        }
+        return Ok(productModel);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var product = await _productRepository.Delete(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+        return NoContent();
+    }
+
+    
+
+  
+
+
+    
     /* probando
     [HttpPost("add-to-cart")]
     public IActionResult AddToCart(int productId, int userId)

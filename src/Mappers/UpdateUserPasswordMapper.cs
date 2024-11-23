@@ -14,7 +14,7 @@ namespace taller01.src.Mappers
             return new UpdateUserPasswordDto 
             {
                 Id = userModel.Id,
-                Contrasena = userModel.Contrasena
+                Password = userModel.Password
             }; 
         }
     }

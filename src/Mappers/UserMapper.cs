@@ -14,13 +14,13 @@ namespace taller01.src.Mappers
             return new UserDto 
             {
                 Id = userModel.Id,
-                Nombre = userModel.Nombre,
+                Name = userModel.Name,
                 Rut = userModel.Rut,
-                FechaNacimiento = userModel.FechaNacimiento,
-                Correo = userModel.Correo, 
-                Contrasena = userModel.Contrasena,
+                Birthdate = userModel.Birthdate,
+                Mail = userModel.Mail, 
+                Password = userModel.Password,
                 GenderId = userModel.GenderId,
-                EstadoId = userModel.EstadoId
+                StatusId = userModel.StatusId
               };
         }
         public static User ToUser(this UserDto userDto) 
@@ -28,13 +28,13 @@ namespace taller01.src.Mappers
             return new User
             {
                 Id = userDto.Id,
-                Nombre = userDto.Nombre,
+                Name = userDto.Name,
                 Rut = userDto.Rut,
-                FechaNacimiento = userDto.FechaNacimiento,
-                Correo = userDto.Correo, 
-                Contrasena = userDto.Contrasena,
+                Birthdate = userDto.Birthdate,
+                Mail = userDto.Mail, 
+                Password = userDto.Password,
                 GenderId = userDto.GenderId,
-                EstadoId = userDto.EstadoId, 
+                StatusId = userDto.StatusId, 
                 RoleId = 2  
             };
         }

@@ -12,27 +12,27 @@ namespace api.src.models
         
         public String Rut { get; set; } = string.Empty;
 
-        public String Nombre { get; set; } = string.Empty; 
+        public String Name { get; set; } = string.Empty; 
 
-        public DateTime FechaNacimiento { get; set; }
+        public DateTime Birthdate { get; set; }
 
-        public String Correo { get; set; } = string.Empty;
+        public String Mail { get; set; } = string.Empty;
 
-        public String Contrasena { get; set; } = string.Empty;
+        public String Password { get; set; } = string.Empty;
         
 
         // Entityframework relationship
 
-        public List<Product> Products {get; } = new List<Product>();
-        public List<Receipt> Receipts {get; } = new List<Receipt>();
+        public List<Product> Products {get; set;} = [];
+        public List<Receipt> Receipts {get; } = [];
         
 
         public int RoleId { get; set; } 
 
         public Role Role {get; set; } = null!; 
 
-        public int EstadoId {get; set;}
-        public Estado Estado {get; set;} = null!;
+        public int StatusId {get; set;}
+        public Status Status {get; set;} = null!;
 
         public int GenderId {get; set;}
         public Gender Gender {get; set;} = null!;

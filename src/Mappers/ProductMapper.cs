@@ -14,9 +14,9 @@ namespace taller01.src.Mappers
             return new ProductDto 
             {
                 Id = productModel.Id,
-                Nombre = productModel.Nombre,
-                Tipo = productModel.Tipo,
-                Precio = productModel.Precio,
+                Name = productModel.Name,
+                Type = productModel.Type,
+                Price = productModel.Price,
                 Stock = productModel.Stock
             };
         }

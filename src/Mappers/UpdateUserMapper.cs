@@ -13,8 +13,8 @@ namespace taller01.src.Mappers
         {
             return new UpdateUserDto
             {
-                Nombre = userModel.Nombre,
-                FechaNacimiento = userModel.FechaNacimiento,
+                Name = userModel.Name,
+                Birthdate = userModel.Birthdate,
                 GenderId = userModel.GenderId
             };
         }

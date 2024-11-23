@@ -22,25 +22,25 @@ namespace api.src.data
                     context.Roles.AddRange(
                         new Role
                         {
-                            Nombre = "Admin"
+                            Name = "Admin"
                         },
                         new Role
                         {
-                            Nombre = "User"
+                            Name = "User"
                         }
                     );
                     context.SaveChanges();
                 }
 
 
-                if (!context.Estados.Any()) 
+                if (!context.Statuses.Any()) 
                 {
-                    context.Estados.AddRange(
-                        new Estado
+                    context.Statuses.AddRange(
+                        new Status
                         {
                             Name = "Habilitado"
                         },
-                        new Estado
+                        new Status
                         {
                             Name = "Deshabilitado"
                         }
@@ -76,13 +76,13 @@ namespace api.src.data
                 if (!context.Users.Any())
                 {
                     var userFaker = new Faker<User>()
-                        .RuleFor(u => u.Nombre, f => f.Name.FullName())
+                        .RuleFor(u => u.Name, f => f.Name.FullName())
                         .RuleFor(u => u.Rut, f => GenerateUniqueRandomRut(existingRuts))
-                        .RuleFor(u => u.FechaNacimiento, f => f.Date.Past(30, DateTime.Today))
-                        .RuleFor(u => u.Correo, f => f.Internet.Email())
-                        .RuleFor(u => u.Contrasena, f => f.Internet.Password(8))
+                        .RuleFor(u => u.Birthdate, f => f.Date.Past(30, DateTime.Today))
+                        .RuleFor(u => u.Mail, f => f.Internet.Email())
+                        .RuleFor(u => u.Password, f => f.Internet.Password(8))
                         .RuleFor(u => u.RoleId, f => f.PickRandom(new[] { 1, 2 }))
-                        .RuleFor(u => u.EstadoId, f => f.PickRandom(new[] { 1, 2 }))
+                        .RuleFor(u => u.StatusId, f => f.PickRandom(new[] { 1, 2 }))
                         .RuleFor(u => u.GenderId, f => f.PickRandom(new[] { 1, 2, 3, 4}));
 
                     var users = userFaker.Generate(10);
@@ -93,9 +93,9 @@ namespace api.src.data
                 if (!context.Products.Any())
                 {
                     var productFaker = new Faker<Product>()
-                        .RuleFor(p => p.Nombre, f => f.Commerce.ProductName())
-                        .RuleFor(p => p.Tipo, f => f.PickRandom(new[] { "Poleras", "Gorros", "Juguetería", "Alimentación", "Libros" }))
-                        .RuleFor(p => p.Precio, f => f.Random.Int(1000, 99999999))
+                        .RuleFor(p => p.Name, f => f.Commerce.ProductName())
+                        .RuleFor(p => p.Type, f => f.PickRandom(new[] { "Poleras", "Gorros", "Juguetería", "Alimentación", "Libros" }))
+                        .RuleFor(p => p.Price, f => f.Random.Int(1000, 99999999))
                         .RuleFor(p => p.Stock, f => f.Random.Int(0, 99999));
 
                     var products = productFaker.Generate(10);

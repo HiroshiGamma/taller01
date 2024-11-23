@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.src.data;
+using api.src.Dtos;
 using api.src.models;
 using Microsoft.EntityFrameworkCore;
 using taller01.src.Dtos;
@@ -52,22 +53,32 @@ namespace taller01.src.Repository
             return product;
         }
 
-        public async Task<Product?> Put(int id, ProductDto productDto)
+        public async Task<Product?> Put(int id, UpdateProductDto productDto)
         {
             var productModel = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
             if (productModel == null)
             {
                 throw new Exception("Product not found");
             }
-            productModel.Nombre = productDto.Nombre;
-            productModel.Tipo = productDto.Tipo;
-            productModel.Precio = productDto.Precio;
+            productModel.Name = productDto.Name;
+            productModel.Type = productDto.Type;
+            productModel.Price = productDto.Price;
             productModel.Stock = productDto.Stock;
             
             await _context.SaveChangesAsync();
             return productModel;
         }
 
-        
+        public async Task<bool> DeleteProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return false;
+            }
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

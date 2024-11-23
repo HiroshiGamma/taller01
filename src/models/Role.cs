@@ -9,6 +9,6 @@ namespace api.src.models
     {
         public int Id { get; set; }
 
-        public String Nombre { get; set; } = string.Empty;
+        public String Name { get; set; } = string.Empty;
     }
 }

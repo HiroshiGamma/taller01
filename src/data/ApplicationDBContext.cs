@@ -13,9 +13,8 @@ namespace api.src.data
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Role> Roles { get; set; } = null!;
-        public DbSet<Receipt> Receipts {get; set;} = null!;
-        public DbSet<Estado> Estados {get; set;} = null!;
-        public DbSet<Gender> Genders {get; set;} = null!;
-
+        public DbSet<Receipt> Receipts { get; set; } = null!;
+        public DbSet<Status> Statuses { get; set; } = null!;
+        public DbSet<Gender> Genders { get; set; } = null!;
     }
 }

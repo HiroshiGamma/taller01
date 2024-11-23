@@ -7,9 +7,8 @@ namespace taller01.src.Dtos
 {
     public class UpdateUserDto
     {
-        public String Nombre { get; set; } = string.Empty; 
-
-        public DateTime FechaNacimiento { get; set; }
+        public String Name { get; set; } = string.Empty; 
+        public DateTime Birthdate { get; set; }
         public int GenderId { get; set; }
     }
 }

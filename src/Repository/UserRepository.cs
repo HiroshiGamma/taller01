@@ -72,8 +72,8 @@ namespace taller01.src.Repository
             {
                 throw new Exception("User not found");
             }
-            userModel.Nombre = updateUserDto.Nombre;
-            userModel.FechaNacimiento = updateUserDto.FechaNacimiento;
+            userModel.Name = updateUserDto.Name;
+            userModel.Birthdate = updateUserDto.Birthdate;
             userModel.GenderId = updateUserDto.GenderId;
 
             await _context.SaveChangesAsync();
