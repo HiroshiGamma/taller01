@@ -58,7 +58,7 @@ namespace taller01.src.Controllers
 
         return Ok(products);
     }
-    [HttpGet("{id: int}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
         var product = await _productRepository.GetById(id);
@@ -108,7 +108,7 @@ namespace taller01.src.Controllers
     }
 
     [HttpPut]
-    [Route("{id:int}")]
+    [Route("{id}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UpdateProductDto updateProductDto)
     {
         var productModel = await _productRepository.Put(id, updateProductDto);
@@ -119,7 +119,7 @@ namespace taller01.src.Controllers
         return Ok(productModel);
     }
 
-    [HttpDelete("{id: int}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var product = await _productRepository.Delete(id);

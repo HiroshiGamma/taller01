@@ -8,7 +8,7 @@ namespace taller01.src.models
 {
     public class Receipt
     {
-        public int Id {get; set;}
+        public required string Id {get; set;}
 
         public DateTime Date { get; internal set; }
         
