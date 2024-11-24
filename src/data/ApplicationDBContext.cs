@@ -11,13 +11,15 @@ namespace api.src.data
 {
     public class ApplicationDBContext : IdentityDbContext<AppUser>
     {
-        public ApplicationDBContext(DbContextOptions dbContextOptions): base(dbContextOptions) 
-        {
-            
-        }
         public DbSet<Product> Products { get; set; } = null!;
 
         public DbSet<Receipt> Receipts { get; set; } = null!;
+        
+        public ApplicationDBContext(DbContextOptions dbContextOptions): base(dbContextOptions) 
+        {
+
+        }
+        
     }
 
     

@@ -15,8 +15,6 @@ namespace taller01.src.models
         
         //entityframework relationship
 
-        public int UserId {get; set;}
-
         
         public List<Product> Products {get; set;} = [];
 
