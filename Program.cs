@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using taller01.src.Helpers;
+using taller01.src.Interface;
 using taller01.src.Interfaces;
 using taller01.src.models;
 using taller01.src.Repository;
+using taller01.src.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,7 @@ builder.Services.AddSingleton(cloudinary);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(
     opt => 
