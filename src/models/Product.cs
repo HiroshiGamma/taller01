@@ -18,6 +18,7 @@ namespace api.src.models
         public int Price { get; set; }
 
         public int Stock { get; set; }
+        
         public string ImageUrl { get; set; } = string.Empty;
 
 

@@ -8,6 +8,7 @@ using api.src.Mappers;
 using api.src.models;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using taller01.src.Interfaces;
 using taller01.src.Mappers;
@@ -17,6 +18,7 @@ namespace taller01.src.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
