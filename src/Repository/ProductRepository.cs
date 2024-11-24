@@ -48,6 +48,7 @@ namespace taller01.src.Repository
 
         public async Task<Product?> Post(Product product)
         {
+            
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
             return product;

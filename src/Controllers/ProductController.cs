@@ -7,6 +7,7 @@ using api.src.Dtos;
 using api.src.Mappers;
 using api.src.models;
 using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using taller01.src.Interfaces;
 using taller01.src.Mappers;
@@ -14,7 +15,7 @@ using taller01.src.Repository;
 
 namespace taller01.src.Controllers
 {
-    [Route("product")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -59,14 +60,53 @@ namespace taller01.src.Controllers
 
         return Ok(products);
     }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById([FromRoute] int id)
+    {
+        var product = await _productRepository.GetById(id);
+
+        if (product == null)
+        {
+            return NotFound();
+        }
+        return Ok(product);
+    }
 
 
     [HttpPost]
-    public IActionResult post([FromBody] CreateProductDto createProductDto)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> postAsync([FromForm] CreateProductDto createProductDto)
     {
-        var product = createProductDto.ToProductFromCreateDto();
-        _productRepository.Post(product);
-        return CreatedAtAction(nameof(Get), new { id = product.Id }, product.ToProductDto());
+        if (createProductDto.Image == null || createProductDto.Image.Length == 0) 
+        {
+            return BadRequest("Image is required");
+        }
+        if (createProductDto.Image.ContentType != "image/png" && createProductDto.Image.ContentType != "image/jpeg")
+        {
+            return BadRequest("Only PNG and JPG images are allowed.");
+        }
+        if (createProductDto.Image.Length > 10 * 1024 * 1024)
+        {
+                return BadRequest("Image size must not exceed 10 MB.");
+        }
+
+         var uploadParams = new ImageUploadParams
+        {
+            File = new FileDescription(createProductDto.Image.FileName, createProductDto.Image.OpenReadStream()),
+            Folder = "product_images"
+        };
+
+        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+        if (uploadResult.Error != null)
+        {
+            return BadRequest(uploadResult.Error.Message);
+        }
+        
+        var product = createProductDto.ToProductFromCreateDto(uploadResult.SecureUrl.AbsoluteUri);
+
+        await _productRepository.Post(product);
+        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
     }
 
     [HttpPut]

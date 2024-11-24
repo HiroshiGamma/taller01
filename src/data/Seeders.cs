@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using api.src.models;
 using Bogus;
@@ -9,9 +11,10 @@ using taller01.src.models;
 namespace api.src.data
 {
     public class Seeders
-    {
+    {   private static readonly string[] TopLevelDomains = { "com", "org", "net", "io", "dev" };
         public static void Initialize(IServiceProvider serviceProvider)
         {
+            
             using (var scope = serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -81,7 +84,7 @@ namespace api.src.data
                         .RuleFor(u => u.Birthdate, f => f.Date.Past(30, DateTime.Today))
                         .RuleFor(u => u.Mail, f => f.Internet.Email())
                         .RuleFor(u => u.Password, f => f.Internet.Password(8))
-                        .RuleFor(u => u.RoleId, f => f.PickRandom(new[] { 1, 2 }))
+                        .RuleFor(u => u.RoleId, f => f.PickRandom(new[] { 2 }))
                         .RuleFor(u => u.StatusId, f => f.PickRandom(new[] { 1, 2 }))
                         .RuleFor(u => u.GenderId, f => f.PickRandom(new[] { 1, 2, 3, 4}));
 
@@ -96,7 +99,8 @@ namespace api.src.data
                         .RuleFor(p => p.Name, f => f.Commerce.ProductName())
                         .RuleFor(p => p.Type, f => f.PickRandom(new[] { "Poleras", "Gorros", "Juguetería", "Alimentación", "Libros" }))
                         .RuleFor(p => p.Price, f => f.Random.Int(1000, 99999999))
-                        .RuleFor(p => p.Stock, f => f.Random.Int(0, 99999));
+                        .RuleFor(p => p.Stock, f => f.Random.Int(0, 99999))
+                        .RuleFor(p => p.ImageUrl, f => GenerateSecureRandomUrl(8,12));
 
                     var products = productFaker.Generate(10);
                     context.Products.AddRange(products);
@@ -168,6 +172,41 @@ namespace api.src.data
             if (mod == 10) return 'K';
 
             return mod.ToString()[0];
+        }
+        public static string GenerateSecureRandomUrl(int subdomainLength, int pathLength)
+        {
+            var subdomain = GenerateCryptoRandomString(subdomainLength).ToLower();
+            var tld = TopLevelDomains[RandomNumberGenerator.GetInt32(TopLevelDomains.Length)];
+            var path = GenerateCryptoRandomString(pathLength).ToLower();
+            
+            return $"https://{subdomain}.{tld}/{path}";
+        }
+        
+        private static string GenerateRandomString(int length)
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            var result = new StringBuilder(length);
+            
+            for (int i = 0; i < length; i++)
+            {
+                result.Append(chars[random.Next(chars.Length)]);
+            }
+            
+            return result.ToString();
+        }
+        
+        private static string GenerateCryptoRandomString(int length)
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var result = new StringBuilder(length);
+            
+            for (int i = 0; i < length; i++)
+            {
+                result.Append(chars[RandomNumberGenerator.GetInt32(chars.Length)]);
+            }
+            
+            return result.ToString();
         }
     }
 

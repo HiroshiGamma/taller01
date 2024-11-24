@@ -9,14 +9,15 @@ namespace api.src.Mappers
 {
     public static class ToProductFromCreateDtoMapper
     {
-        public static Product ToProductFromCreateDto(this CreateProductDto createProductDto)
+        public static Product ToProductFromCreateDto(this CreateProductDto createProductDto, string url)
         {
             return new Product
             {
                 Name = createProductDto.Name,
                 Type = createProductDto.Type,
                 Price = createProductDto.Price,
-                Stock = createProductDto.Stock
+                Stock = createProductDto.Stock,
+                ImageUrl = url
             };
         }
     }
