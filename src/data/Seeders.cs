@@ -20,78 +20,7 @@ namespace api.src.data
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<ApplicationDBContext>();
 
-                if (!context.Roles.Any())
-                {
-                    context.Roles.AddRange(
-                        new Role
-                        {
-                            Name = "Admin"
-                        },
-                        new Role
-                        {
-                            Name = "User"
-                        }
-                    );
-                    context.SaveChanges();
-                }
-
-
-                if (!context.Statuses.Any()) 
-                {
-                    context.Statuses.AddRange(
-                        new Status
-                        {
-                            Name = "Habilitado"
-                        },
-                        new Status
-                        {
-                            Name = "Deshabilitado"
-                        }
-                    );
-                    context.SaveChanges();
-                }
-
-                if (!context.Genders.Any()) 
-                {
-                    context.Genders.AddRange(
-                        new Gender
-                        {
-                            Name = "Femenino"
-                        },
-                        new Gender
-                        {
-                            Name = "Masculino"
-                        },
-                        new Gender
-                        {
-                            Name = "Prefiero no decirlo"
-                        },
-                        new Gender
-                        {
-                            Name = "Otro"
-                        }
-                    );
-                    context.SaveChanges();
-                }
-
-                var existingRuts = new HashSet<string>();
-
-                if (!context.Users.Any())
-                {
-                    var userFaker = new Faker<User>()
-                        .RuleFor(u => u.Name, f => f.Name.FullName())
-                        .RuleFor(u => u.Rut, f => GenerateUniqueRandomRut(existingRuts))
-                        .RuleFor(u => u.Birthdate, f => f.Date.Past(30, DateTime.Today))
-                        .RuleFor(u => u.Mail, f => f.Internet.Email())
-                        .RuleFor(u => u.Password, f => f.Internet.Password(8))
-                        .RuleFor(u => u.RoleId, f => f.PickRandom(new[] { 2 }))
-                        .RuleFor(u => u.StatusId, f => f.PickRandom(new[] { 1, 2 }))
-                        .RuleFor(u => u.GenderId, f => f.PickRandom(new[] { 1, 2, 3, 4}));
-
-                    var users = userFaker.Generate(10);
-                    context.Users.AddRange(users);
-                    context.SaveChanges();
-                }
+                
 
                 if (!context.Products.Any())
                 {
@@ -111,8 +40,7 @@ namespace api.src.data
                 if(!context.Receipts.Any())
                 {
                     var receiptFaker = new Faker<Receipt>()
-                        .RuleFor(r => r.Date, f => f.Date.Recent())
-                        .RuleFor(r => r.UserId, f => f.PickRandom(context.Users.Select(u => u.Id).ToList()));
+                        .RuleFor(r => r.Date, f => f.Date.Recent());
 
                     var receipts = receiptFaker.Generate(10);
 

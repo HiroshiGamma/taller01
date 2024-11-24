@@ -20,12 +20,10 @@ namespace taller01.src.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
-        private readonly IUserRepository _userRepository;
         private readonly Cloudinary _cloudinary;
-        public ProductController(IProductRepository productRepository, IUserRepository userRepository, Cloudinary cloudinary)
+        public ProductController(IProductRepository productRepository,  Cloudinary cloudinary)
         {
             _productRepository = productRepository;
-            _userRepository = userRepository;
             _cloudinary = cloudinary;
         }
     
@@ -60,7 +58,7 @@ namespace taller01.src.Controllers
 
         return Ok(products);
     }
-    [HttpGet("{id}")]
+    [HttpGet("{id: int}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
         var product = await _productRepository.GetById(id);
@@ -121,7 +119,7 @@ namespace taller01.src.Controllers
         return Ok(productModel);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id: int}")]
     public async Task<IActionResult> Delete(int id)
     {
         var product = await _productRepository.Delete(id);
