@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "40985ff2-ebfa-4e87-a41f-bed38016bae0",
+		"name": "ProductController",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "36340634"
+	},
+	"item": [
+		{
+			"name": "Muestra un listado de productos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5042/api/Product?",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5042",
+					"path": [
+						"api",
+						"Product"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Producto ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:5042/api/Product/"
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar producto",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": "http://localhost:5042/api/Product/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Borrar un producto",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:5042/api/Product/1"
+			},
+			"response": []
+		},
+		{
+			"name": "crear",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "http://localhost:5042/api/Product"
+			},
+			"response": []
+		}
+	]
+}

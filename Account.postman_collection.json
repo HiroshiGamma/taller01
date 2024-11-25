@@ -1,0 +1,46 @@
+{
+	"info": {
+		"_postman_id": "cf3b2362-9cca-40cc-84c5-209e89df2b19",
+		"name": "Account",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "36340634"
+	},
+	"item": [
+		{
+			"name": "Actualizar contraseña",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": "http://localhost:5042/api/Account/UpdatePassword"
+			},
+			"response": []
+		},
+		{
+			"name": "activar/desactivar usuario",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": "http://localhost:5042/api/Account/Enable-DisbleUser"
+			},
+			"response": []
+		},
+		{
+			"name": "Borrar cuenta",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "http://localhost:5042/api/Account/"
+			},
+			"response": []
+		},
+		{
+			"name": "Cerrar sesion",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "http://localhost:5042/api/Account/logout"
+			},
+			"response": []
+		}
+	]
+}
