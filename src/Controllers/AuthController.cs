@@ -26,6 +26,9 @@ namespace taller01.src.Controllers
             _signInManager = signInManager;
         }
 
+        // This method registers a new user.
+        // Parameters:
+        // - registerDto: Contains the username, email, and password for the new user.
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
@@ -36,7 +39,7 @@ namespace taller01.src.Controllers
 
                 var appUser = new AppUser
                 {
-                    UserName = registerDto.Name,
+                    UserName = registerDto.Username,
                     Email = registerDto.Email,
                 };
 
@@ -71,6 +74,11 @@ namespace taller01.src.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        
+        // This method logs in an existing user.
+        // Parameters:
+        // - loginDto: Contains the username and password for the user.
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {

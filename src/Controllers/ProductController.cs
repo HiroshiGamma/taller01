@@ -10,6 +10,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using taller01.src.Dtos;
 using taller01.src.Interfaces;
 using taller01.src.Mappers;
 using taller01.src.Repository;
@@ -29,135 +30,128 @@ namespace taller01.src.Controllers
             _cloudinary = cloudinary;
         }
     
-    [HttpGet]
-    public IActionResult Get(string? searchText, string? type, string? order)
-    {
-        var productsQuery = _productRepository.GetAsQuery(searchText, type, order);
-
-        if (!string.IsNullOrEmpty(searchText))
+        // Retrieves a list of products based on the provided filters and order.
+        // Parameters:
+        // - productDto: DTO containing product filters (Name, Type).
+        // - order: Optional order parameter to sort products by price (asc or desc).
+        [HttpGet]
+        public IActionResult Get([FromQuery] ProductDto productDto, string? order)
         {
-            productsQuery = productsQuery.Where(p => p.Name.Contains(searchText));
+            var productsQuery = _productRepository.GetAsQuery(productDto.Name, productDto.Type, order);
+
+            if (!string.IsNullOrEmpty(productDto.Name))
+            {
+                productsQuery = productsQuery.Where(p => p.Name.Contains(productDto.Name));
+            }
+
+            if (!string.IsNullOrEmpty(productDto.Type))
+            {
+                productsQuery = productsQuery.Where(p => p.Type == productDto.Type);
+            }
+
+            if (order == "asc")
+            {
+                productsQuery = productsQuery.OrderBy(p => p.Price);
+            }
+            else if (order == "desc")
+            {
+                productsQuery = productsQuery.OrderByDescending(p => p.Price);
+            }
+
+            var products = productsQuery
+                .Where(p => p.Stock > 0)
+                .ToList()
+                .Select(p => p.ToProductDto());
+
+            return Ok(products);
         }
 
-        if (!string.IsNullOrEmpty(type))
+        // Retrieves a product by its ID.
+        // Parameters:
+        // - id: The ID of the product to retrieve.
+        [HttpGet]
+        [Route("{id:int}")]
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            productsQuery = productsQuery.Where(p => p.Type == type);
+            var product = await _productRepository.GetById(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
         }
 
-        if (order == "asc")
+        // Creates a new product.
+        // Parameters:
+        // - createProductDto: DTO containing product details and image file.
+        [HttpPost]
+        [Consumes("multipart/form-data")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> postAsync([FromForm] CreateProductDto createProductDto)
         {
-            productsQuery = productsQuery.OrderBy(p => p.Price);
-        }
-        else if (order == "desc")
-        {
-            productsQuery = productsQuery.OrderByDescending(p => p.Price);
+            if (createProductDto.Image == null || createProductDto.Image.Length == 0) 
+            {
+                return BadRequest("Image is required");
+            }
+            if (createProductDto.Image.ContentType != "image/png" && createProductDto.Image.ContentType != "image/jpeg")
+            {
+                return BadRequest("Only PNG and JPG images are allowed.");
+            }
+            if (createProductDto.Image.Length > 10 * 1024 * 1024)
+            {
+                    return BadRequest("Image size must not exceed 10 MB.");
+            }
+
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription(createProductDto.Image.FileName, createProductDto.Image.OpenReadStream()),
+                Folder = "product_images"
+            };
+
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.Error != null)
+            {
+                return BadRequest(uploadResult.Error.Message);
+            }
+            
+            var product = createProductDto.ToProductFromCreateDto(uploadResult.SecureUrl.AbsoluteUri);
+
+            await _productRepository.Post(product);
+            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
         }
 
-        var products = productsQuery
-            .Where(p => p.Stock > 0)
-            .ToList()
-            .Select(p => p.ToProductDto());
+        // Updates an existing product by its ID.
+        // Parameters:
+        // - id: The ID of the product to update.
+        // - updateProductDto: DTO containing updated product details.
+        [HttpPut]
+        [Route("{id:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UpdateProductDto updateProductDto)
+        {
+            var productModel = await _productRepository.Put(id, updateProductDto);
+            if (productModel == null)
+            {
+                return NotFound();
+            }
+            return Ok(productModel);
+        }
 
-        return Ok(products);
+        // Deletes a product by its ID.
+        // Parameters:
+        // - id: The ID of the product to delete.
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var product = await _productRepository.Delete(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
     }
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
-    {
-        var product = await _productRepository.GetById(id);
-
-        if (product == null)
-        {
-            return NotFound();
-        }
-        return Ok(product);
-    }
-
-
-    [HttpPost]
-    [Consumes("multipart/form-data")]
-    public async Task<IActionResult> postAsync([FromForm] CreateProductDto createProductDto)
-    {
-        if (createProductDto.Image == null || createProductDto.Image.Length == 0) 
-        {
-            return BadRequest("Image is required");
-        }
-        if (createProductDto.Image.ContentType != "image/png" && createProductDto.Image.ContentType != "image/jpeg")
-        {
-            return BadRequest("Only PNG and JPG images are allowed.");
-        }
-        if (createProductDto.Image.Length > 10 * 1024 * 1024)
-        {
-                return BadRequest("Image size must not exceed 10 MB.");
-        }
-
-         var uploadParams = new ImageUploadParams
-        {
-            File = new FileDescription(createProductDto.Image.FileName, createProductDto.Image.OpenReadStream()),
-            Folder = "product_images"
-        };
-
-        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
-        if (uploadResult.Error != null)
-        {
-            return BadRequest(uploadResult.Error.Message);
-        }
-        
-        var product = createProductDto.ToProductFromCreateDto(uploadResult.SecureUrl.AbsoluteUri);
-
-        await _productRepository.Post(product);
-        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
-    }
-
-    [HttpPut]
-    [Route("{id}")]
-    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UpdateProductDto updateProductDto)
-    {
-        var productModel = await _productRepository.Put(id, updateProductDto);
-        if (productModel == null)
-        {
-            return NotFound();
-        }
-        return Ok(productModel);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var product = await _productRepository.Delete(id);
-        if (product == null)
-        {
-            return NotFound();
-        }
-        return NoContent();
-    }
-
-    
-
-  
-
-
-    
-    /* probando
-    [HttpPost("add-to-cart")]
-    public IActionResult AddToCart(int productId, int userId)
-    {
-        var user = _userRepository.GetById(userId);
-        var product = _productRepository.GetById(productId);
-
-        if (user == null || product == null || product. <= 0)
-        {
-            return BadRequest("Invalid user or product, or product out of stock.");
-        }
-
-        
-        _userRepository.AddProductToUser(userId, product);
-        product.Stock--;
-
-        _context.SaveChanges();
-
-        return Ok("Product added to cart.");
-    } */
-    }
-    
 }

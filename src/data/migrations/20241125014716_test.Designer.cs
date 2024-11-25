@@ -8,11 +8,11 @@ using api.src.data;
 
 #nullable disable
 
-namespace api.src.Data.migrations
+namespace api.src.data.migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20241124182535_AddRole")]
-    partial class AddRole
+    [Migration("20241125014716_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -179,8 +179,8 @@ namespace api.src.Data.migrations
                     b.Property<int>("Price")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ReceiptId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid?>("ReceiptId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Stock")
                         .HasColumnType("INTEGER");
@@ -208,12 +208,19 @@ namespace api.src.Data.migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
@@ -237,6 +244,10 @@ namespace api.src.Data.migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Rut")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
@@ -262,9 +273,9 @@ namespace api.src.Data.migrations
 
             modelBuilder.Entity("taller01.src.models.Receipt", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");

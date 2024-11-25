@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.src.Dtos;
 using api.src.models;
 using taller01.src.Dtos;
 
@@ -16,8 +17,19 @@ namespace taller01.src.Mappers
                 Id = productModel.Id,
                 Name = productModel.Name,
                 Type = productModel.Type,
-                Price = productModel.Price,
-                Stock = productModel.Stock
+                Price = productModel.Price
+            };
+        }
+
+          public static Product ToProductFromCreateDto(this CreateProductDto createProductDto, string url)
+        {
+            return new Product
+            {
+                Name = createProductDto.Name,
+                Type = createProductDto.Type,
+                Price = createProductDto.Price,
+                Stock = createProductDto.Stock,
+                ImageUrl = url
             };
         }
     }

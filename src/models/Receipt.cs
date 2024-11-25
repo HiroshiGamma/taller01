@@ -8,7 +8,7 @@ namespace taller01.src.models
 {
     public class Receipt
     {
-        public required string Id {get; set;}
+        public required Guid Id {get; set;} // Change type to Guid
 
         public DateTime Date { get; internal set; }
         
@@ -16,7 +16,7 @@ namespace taller01.src.models
         //entityframework relationship
 
         
-        public List<Product> Products {get; set;} = [];
+        public List<Product> Products {get; set;} = new List<Product>();
 
         
     }

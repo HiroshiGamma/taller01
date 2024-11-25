@@ -7,20 +7,21 @@ using System.Threading.Tasks;
 using api.src.models;
 using Bogus;
 using taller01.src.models;
+using Microsoft.AspNetCore.Identity;
 
 namespace api.src.data
 {
     public class Seeders
-    {   private static readonly string[] TopLevelDomains = { "com", "org", "net", "io", "dev" };
+    {   
+        private static readonly string[] TopLevelDomains = { "com", "org", "net", "io", "dev" };
+        
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            
             using (var scope = serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<ApplicationDBContext>();
 
-                
 
                 if (!context.Products.Any())
                 {
@@ -55,11 +56,63 @@ namespace api.src.data
                     context.SaveChanges();
                 }
 
+                if(!context.Users.Any())
+                {
+                    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                    var existingEmails = new HashSet<string>();
+                    var existingRuts = new HashSet<string>();
+
+                    // Seed admin user
+                    var adminUser = new AppUser
+                    {
+                        UserName = "Ignacio Mancilla",
+                        Email = "admin@idwm.cl",
+                        Rut = "20.416.699-4",
+                        DateOfBirth = new DateTime(2000, 10, 25),
+                        Gender = "Masculino"
+                    };
+                    var adminResult = userManager.CreateAsync(adminUser, "P4ssw0rd").Result;
+                    if (adminResult.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(adminUser, "Admin").Wait();
+                    }
+
+                    // Seed regular users
+                    var userFaker = new Faker<AppUser>()
+                        .RuleFor(u => u.Rut, f => GenerateUniqueRandomRut(existingRuts))
+                        .RuleFor(u => u.UserName, f => f.Name.FullName())
+                        .RuleFor(u => u.Email, f => GenerateUniqueRandomEmail(existingEmails))
+                        .RuleFor(u => u.DateOfBirth, f => f.Date.Past(18))
+                        .RuleFor(u => u.Gender, f => f.PickRandom(new[] { "Femenino", "Masculino", "Prefiero no decirlo", "Otro" }))
+                        .RuleFor(u => u.PasswordHash, (f, u) => userManager.PasswordHasher.HashPassword(u, f.Internet.Password(20)));
+
+                    var users = userFaker.Generate(10);
+                    foreach (var user in users)
+                    {
+                        var result = userManager.CreateAsync(user).Result;
+                        if (result.Succeeded)
+                        {
+                            userManager.AddToRoleAsync(user, "User").Wait();
+                        }
+                    }
+
+                    context.SaveChanges();
+                }
+
                 context.SaveChanges();
             }
+        }
 
-          
-            
+        private static string GenerateUniqueRandomEmail(HashSet<string> existingEmails)
+        {
+            string email;
+            do
+            {
+                email = new Faker().Internet.Email();
+            } while (existingEmails.Contains(email));
+
+            existingEmails.Add(email);
+            return email;
         }
 
         private static string GenerateUniqueRandomRut(HashSet<string> existingRuts)
@@ -101,6 +154,7 @@ namespace api.src.data
 
             return mod.ToString()[0];
         }
+        
         public static string GenerateSecureRandomUrl(int subdomainLength, int pathLength)
         {
             var subdomain = GenerateCryptoRandomString(subdomainLength).ToLower();
@@ -137,5 +191,4 @@ namespace api.src.data
             return result.ToString();
         }
     }
-
 }
