@@ -17,22 +17,22 @@ namespace taller01.src.Controllers
     [Authorize(Roles = "Admin,User")]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
         }
-
-        [HttpPut]
+        /*
+        [HttpPut("UpdateUser")]
         [Route("{id}")]
         [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UpdateUserDto updateUserDto) {
-            AppUser? user = await _userManager.FindByIdAsync(id) as AppUser; 
+            var user = await _userManager.FindByIdAsync(id); 
             if (user == null)
             {
                 throw new Exception("Usuario no encontrado");
@@ -41,10 +41,7 @@ namespace taller01.src.Controllers
             {
                 user.UserName = updateUserDto.Name;
             }
-            if (updateUserDto.Birthdate != null) 
-            {
-                user.DateOfBirth = updateUserDto.Birthdate;
-            }
+            
             if (updateUserDto.Gender != null) 
             {
                 user.Gender = updateUserDto.Gender;
@@ -56,8 +53,8 @@ namespace taller01.src.Controllers
             }
             return BadRequest();
         }
-        [HttpPut]
-        [Route("{id}")]
+        */
+        [HttpPut("UpdatePassword")]
         [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> UpdatePassword([FromRoute] string id, [FromBody] string oldPassword, string newPassword) 
         {
@@ -73,8 +70,8 @@ namespace taller01.src.Controllers
             }
             return Ok();
         }
-
-        [HttpPut]
+        
+        [HttpPut("Enable-DisbleUser")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EnableDisableUser([FromBody] string id) 
         {
@@ -122,7 +119,7 @@ namespace taller01.src.Controllers
             return BadRequest();
             
         }
-        [HttpPost]
+        [HttpDelete]
         [Route("{id}")]
         [Authorize(Roles = "User")]
         public async Task<IActionResult> DeleteAccount([FromRoute] string id)
