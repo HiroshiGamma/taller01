@@ -65,7 +65,7 @@ namespace api.src.data
                     // Seed admin user
                     var adminUser = new AppUser
                     {
-                        UserName = "Ignacio Mancilla",
+                        UserName = "admin@idwm.cl",
                         Email = "admin@idwm.cl",
                         Rut = "20.416.699-4",
                         DateOfBirth = new DateTime(2000, 10, 25),
@@ -80,8 +80,8 @@ namespace api.src.data
                     // Seed regular users
                     var userFaker = new Faker<AppUser>()
                         .RuleFor(u => u.Rut, f => GenerateUniqueRandomRut(existingRuts))
-                        .RuleFor(u => u.UserName, f => f.Name.FullName())
-                        .RuleFor(u => u.Email, f => GenerateUniqueRandomEmail(existingEmails))
+                        .RuleFor(u => u.UserName, f => GenerateUniqueRandomEmail(existingEmails))
+                        .RuleFor(u => u.Email, (f, u) => u.UserName)
                         .RuleFor(u => u.DateOfBirth, f => f.Date.Past(18))
                         .RuleFor(u => u.Gender, f => f.PickRandom(new[] { "Femenino", "Masculino", "Prefiero no decirlo", "Otro" }))
                         .RuleFor(u => u.PasswordHash, (f, u) => userManager.PasswordHasher.HashPassword(u, f.Internet.Password(20)));
