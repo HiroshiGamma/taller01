@@ -17,7 +17,8 @@ namespace taller01.src.Mappers
                 Id = productModel.Id,
                 Name = productModel.Name,
                 Type = productModel.Type,
-                Price = productModel.Price
+                Price = productModel.Price,
+                ImageUrl = productModel.ImageUrl
             };
         }
 

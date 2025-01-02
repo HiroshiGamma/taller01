@@ -20,7 +20,7 @@ namespace api.src.Repository
     /// <summary>
     /// Repositorio de usuario
     /// </summary>
-    public class UserRepository : iUserRepository
+    public class UserRepository : IUserRepository
     {
 
         private readonly ApplicationDBContext _dataContext;
@@ -60,11 +60,7 @@ namespace api.src.Repository
             return await users.Skip(skipNumber).Take(query.PageSize).ToListAsync();
         }
 
-        /// <summary>
-        /// Meotodo para habilitar o deshabilitar un usuario
-        /// </summary>
-        /// <param name="rut"> rut del usuario a cambiar su estado </param>
-        /// <param name="enable"> variable booleana para cambiar </param>
+
         public async Task EnableDisableUser(string rut, bool enable)
         {
 
@@ -75,9 +71,9 @@ namespace api.src.Repository
                 throw new Exception("User not found");
             }
 
-            user.Enabled = enable; // Si estás utilizando un campo "Enabled" personalizado, mantenlo.
+            user.Enabled = enable;
 
-            // Si el campo Enabled es parte de Identity, necesitarías hacer un poco más con UserManager.
+           
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -88,12 +84,6 @@ namespace api.src.Repository
         }
 
 
-        /// <summary>
-        /// Metodo para actualizar los datos de un usuario
-        /// </summary>
-        /// <param name="userDto"> Dto, con datos del usuario actualizados </param>
-        /// <param name="currentUser">Usuario actual en el sistema</param>
-        /// <returns>Usuario actualizado</returns>
         public async Task<AppUser?> UpdateUser(UpdateUserDto userDto, ClaimsPrincipal currentUser)
         {
             var user = await _userManager.GetUserAsync(currentUser);
@@ -104,7 +94,7 @@ namespace api.src.Repository
 
             // Actualizar la información del perfil
             user.UserName = userDto.Name;
-            user.DateOfBirth = userDto.DateOfBirth;
+            user.DateOfBirth = userDto.Birthdate;
             user.Gender = userDto.Gender;
 
             // Actualizar en Identity

@@ -27,22 +27,24 @@ namespace api.src.Dtos.User
         [StringLength(255, MinimumLength = 8, ErrorMessage = "Name must be between 8 and 255 characters.")]
         public string Name { get; set; } = string.Empty;
 
-        private DateTime dateOfBirth;
-
+        [RegularExpression(@"[0-9]{2}-[0-9]{2}-[0-9]{4}", ErrorMessage = "Debe ingresar una fecha valida.")]
+        public string Birthdate { get; set; } = string.Empty;
         /// <summary>
-        /// Fecha de nacimiento del usuario en formato dd-MM-yyyy.
+        /// Metodo para parsear la fecha de nacimiento, verificando que sea una fecha valida y que no sea una fecha futura
         /// </summary>
-        [RegularExpression(@"[0-9]{2}-[0-9]{2}-[0-9]{4}", ErrorMessage = "Please enter a valid date.")]
-        public DateTime DateOfBirth 
-        { 
-            get => dateOfBirth; 
-            set
+        public DateTime ParsedBirthdate
+        {
+            get
             {
-                if (value > DateTime.Today)
+                if (DateTime.TryParseExact(Birthdate, "dd-MM-yyyy", null, System.Globalization.DateTimeStyles.None, out var date))
                 {
-                    throw new ArgumentException("Date of birth cannot be in the future.");
+                    if (date > DateTime.Today)
+                    {
+                        throw new ArgumentException("La fecha de nacimiento no puede ser mayor que la actual.");
+                    }
+                    return date;
                 }
-                dateOfBirth = value;
+                throw new ArgumentException("Debe ingresar una fecha válida.");
             }
         }
 
@@ -51,7 +53,7 @@ namespace api.src.Dtos.User
         /// </summary>
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress]
-        public string Mail { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         /// <summary>
         /// Género del usuario. Debe ser una opción válida.

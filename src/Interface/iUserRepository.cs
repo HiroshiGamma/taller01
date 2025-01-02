@@ -9,7 +9,7 @@ using taller01.src.models;
 
 namespace api.src.Interface
 {
-    public interface iUserRepository
+    public interface IUserRepository
     {
         Task<AppUser?> UpdateUser(UpdateUserDto userDto, ClaimsPrincipal currentUser);
         Task<List<AppUser>> GetUsers(QueryObject query);

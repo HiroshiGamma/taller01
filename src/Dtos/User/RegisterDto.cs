@@ -18,31 +18,37 @@ namespace taller01.src.Dtos
         [Required]
         public string Rut {get; set;} = null!;
 
-        [Required]
-        [DataType(DataType.Date)]
-        public DateTime Birthdate 
+        [RegularExpression(@"[0-9]{2}-[0-9]{2}-[0-9]{4}", ErrorMessage = "Debe ingresar una fecha valida.")]
+        public string Birthdate { get; set; } = string.Empty;
+        
+        public DateTime ParsedBirthdate
         {
-            get => _birthdate;
-            set
+            get
             {
-                if (value >= DateTime.Now)
+                if (DateTime.TryParseExact(Birthdate, "dd-MM-yyyy", null, System.Globalization.DateTimeStyles.None, out var date))
                 {
-                    throw new ValidationException("Birthdate must be a date before the current date.");
+                    if (date > DateTime.Today)
+                    {
+                        throw new ArgumentException("La fecha de nacimiento no puede ser mayor que la actual.");
+                    }
+                    return date;
                 }
-                _birthdate = value;
+                throw new ArgumentException("Debe ingresar una fecha válida.");
             }
         }
-        public DateTime _birthdate;
 
         [EmailAddress]
         [Required]
         public string Email {get; set;} = null!;
+
+        [RegularExpression(@"masculino|femenino|otro|prefiero no decirlo", ErrorMessage = "Debe ingresar una opción valida.") ]
+        public string Gender { get; set; } = string.Empty;
 
         [Required]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
         [MaxLength(20, ErrorMessage = "Password must be less than 20 characters")]
         public string Password {get; set;} = null!;
 
-        public bool enabled {get; set;} = true; 
+        public bool Enabled {get; set;} = true; 
     }
 }

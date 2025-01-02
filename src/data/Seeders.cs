@@ -37,68 +37,6 @@ namespace api.src.data
                     context.SaveChanges();
                     Console.WriteLine("Productos agregados al contexto.");
                 }
-
-                if(!context.Receipts.Any())
-                {
-                    var receiptFaker = new Faker<Receipt>()
-                        .RuleFor(r => r.Date, f => f.Date.Recent());
-
-                    var receipts = receiptFaker.Generate(10);
-
-                    foreach (var receipt in receipts)
-                    {
-                        var productIds = context.Products.Select(p => p.Id).ToList();
-                        var randomProductIds = productIds.OrderBy(x => Guid.NewGuid()).Take(3).ToList();
-                        receipt.Products = context.Products.Where(p => randomProductIds.Contains(p.Id)).ToList();
-                    }
-
-                    context.Receipts.AddRange(receipts);
-                    context.SaveChanges();
-                }
-
-                if(!context.Users.Any())
-                {
-                    var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                    var existingEmails = new HashSet<string>();
-                    var existingRuts = new HashSet<string>();
-
-                    // Seed admin user
-                    var adminUser = new AppUser
-                    {
-                        UserName = "admin@idwm.cl",
-                        Email = "admin@idwm.cl",
-                        Rut = "20.416.699-4",
-                        DateOfBirth = new DateTime(2000, 10, 25),
-                        Gender = "Masculino"
-                    };
-                    var adminResult = userManager.CreateAsync(adminUser, "P4ssw0rd").Result;
-                    if (adminResult.Succeeded)
-                    {
-                        userManager.AddToRoleAsync(adminUser, "Admin").Wait();
-                    }
-
-                    // Seed regular users
-                    var userFaker = new Faker<AppUser>()
-                        .RuleFor(u => u.Rut, f => GenerateUniqueRandomRut(existingRuts))
-                        .RuleFor(u => u.UserName, f => GenerateUniqueRandomEmail(existingEmails))
-                        .RuleFor(u => u.Email, (f, u) => u.UserName)
-                        .RuleFor(u => u.DateOfBirth, f => f.Date.Past(18))
-                        .RuleFor(u => u.Gender, f => f.PickRandom(new[] { "Femenino", "Masculino", "Prefiero no decirlo", "Otro" }))
-                        .RuleFor(u => u.PasswordHash, (f, u) => userManager.PasswordHasher.HashPassword(u, f.Internet.Password(20)));
-
-                    var users = userFaker.Generate(10);
-                    foreach (var user in users)
-                    {
-                        var result = userManager.CreateAsync(user).Result;
-                        if (result.Succeeded)
-                        {
-                            userManager.AddToRoleAsync(user, "User").Wait();
-                        }
-                    }
-
-                    context.SaveChanges();
-                }
-
                 context.SaveChanges();
             }
         }

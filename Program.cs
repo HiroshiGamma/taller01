@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using taller01.src.Helpers;
 using taller01.src.Interface;
-using taller01.src.Interfaces;
 using taller01.src.models;
 using taller01.src.Repository;
 using taller01.src.Service;
@@ -36,7 +35,9 @@ builder.Services.AddSingleton(cloudinary);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(

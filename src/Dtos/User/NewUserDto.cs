@@ -20,6 +20,8 @@ namespace taller01.src.Dtos
         [EmailAddress]
         [Required]
         public string Email {get; set;} = null!;
+        [Required]
+        public string Role { get; set; } = null!;
 
         [Required]
         public string Token {get; set;} = null!;

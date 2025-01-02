@@ -28,7 +28,8 @@ namespace taller01.src.Dtos
         [Required]
         [Range(0, 99999, ErrorMessage = "Stock must be a non-negative integer less than 100 thousand.")]
         public int Stock {get; set;}
-        public required string ImageUrl {get; set;}
+        [Required]
+        public required string ImageUrl {get; set;} 
         
     }
 }

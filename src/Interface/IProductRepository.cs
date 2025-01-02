@@ -6,7 +6,7 @@ using api.src.Dtos;
 using api.src.models;
 using taller01.src.Dtos;
 
-namespace taller01.src.Interfaces
+namespace taller01.src.Interface
 {
     public interface IProductRepository
     {

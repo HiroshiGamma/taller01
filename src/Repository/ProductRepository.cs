@@ -7,7 +7,7 @@ using api.src.Dtos;
 using api.src.models;
 using Microsoft.EntityFrameworkCore;
 using taller01.src.Dtos;
-using taller01.src.Interfaces;
+using taller01.src.Interface;
 
 namespace taller01.src.Repository
 {
