@@ -29,6 +29,6 @@ namespace api.src.Dtos
 
         
         [Required]
-        public IFormFile Image { get; set; } = null!;
+        public IFormFile? Image { get; set; } = null!;
     }
 }

@@ -13,9 +13,9 @@ namespace taller01.src.models
 
         public DateTime? DateOfBirth { get; set; }
 
-        [Required]
-        [AllowedValues("Femenino", "Masculino","Prefiero no decirlo","Otro", ErrorMessage = "Invalid gender value")]
         public string Gender { get; set; } = string.Empty;
+
+        public bool Enabled {get; set;} 
 
     }
 }

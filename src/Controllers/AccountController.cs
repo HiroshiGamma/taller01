@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.src.Repository;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -21,39 +22,16 @@ namespace taller01.src.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager)
+        private readonly UserRepository _userRepository;
+
+        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager, UserRepository userRepository)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
+            _userRepository = userRepository;
         }
-        /*
-        [HttpPut("UpdateUser")]
-        [Route("{id}")]
-        [Authorize(Roles = "Admin,User")]
-        public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UpdateUserDto updateUserDto) {
-            var user = await _userManager.FindByIdAsync(id); 
-            if (user == null)
-            {
-                throw new Exception("Usuario no encontrado");
-            }
-            if (updateUserDto.Name != null) 
-            {
-                user.UserName = updateUserDto.Name;
-            }
-            
-            if (updateUserDto.Gender != null) 
-            {
-                user.Gender = updateUserDto.Gender;
-            }
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-            return BadRequest();
-        }
-        */
+
         [HttpPut("UpdatePassword")]
         [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> UpdatePassword([FromRoute] string id, [FromBody] string oldPassword, string newPassword) 
@@ -71,54 +49,32 @@ namespace taller01.src.Controllers
             return Ok();
         }
         
-        [HttpPut("Enable-DisbleUser")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> EnableDisableUser([FromBody] string id) 
+       /// <summary>
+        /// Metodo para habilitar o deshabilitar un usuario
+        /// </summary>
+        /// <param name="rut"> rut del usuario a habilitar o deshabilitar </param>
+        /// <param name="enable"> variable booleana encargada de cambiar el estado </param>
+        /// <returns> Ok, si el usuario fue cambiado con exito, Error, si no esta autorizado.</returns>
+        [HttpPut("enable-disable/{rut}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> EnableDisableUser([FromRoute] string rut, [FromBody] bool enable)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
+            if (!ModelState.IsValid)
             {
-                throw new Exception("Usuario no encontrado");
+                return BadRequest(ModelState);
             }
-            var currentRole = await _userManager.GetRolesAsync(user);
 
-            foreach(var role in currentRole)
+            // Aquí validamos si el rol del usuario autenticado es Admin
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (!await _userManager.IsInRoleAsync(currentUser!, "Admin"))
             {
-                if (role == "User") 
-                {
-                    var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRole);
-                    if (!removeResult.Succeeded)
-                    {
-                        return BadRequest("Failed to remove current roles");
-                    }
-                    var addResult = await _userManager.AddToRoleAsync(user, "Disabled");
-                    if (!addResult.Succeeded)
-                    {
-                        return BadRequest("Failed to add new role");
-                    }
-
-                    return Ok("Successfully changed user's role to disabled");
-                }
-                if (role == "Disabled") 
-                {
-                    var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRole);
-                    if (!removeResult.Succeeded)
-                    {
-                        return BadRequest("Failed to remove current roles");
-                    }
-                    var addResult = await _userManager.AddToRoleAsync(user, "User");
-                    if (!addResult.Succeeded)
-                    {
-                        return BadRequest("Failed to add new role");
-                    }
-
-                    return Ok("Successfully changed user's role to user");
-                }
-
+                return Unauthorized();
             }
-            return BadRequest();
-            
+
+            await _userRepository.EnableDisableUser(rut, enable);
+            return Ok();
         }
+
         [HttpDelete]
         [Route("{id}")]
         [Authorize(Roles = "User")]

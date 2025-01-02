@@ -8,6 +8,7 @@ namespace taller01.src.Dtos
 {
     public class ProductDto
     {
+        [Key]
         public int Id {get; set;}
 
         [Required]
@@ -24,7 +25,10 @@ namespace taller01.src.Dtos
         [Range(1, 99999999, ErrorMessage = "Price must be a positive integer less than 100 million.")]
         public int Price { get; set; }
 
-
+        [Required]
+        [Range(0, 99999, ErrorMessage = "Stock must be a non-negative integer less than 100 thousand.")]
+        public int Stock {get; set;}
+        public required string ImageUrl {get; set;}
         
     }
 }

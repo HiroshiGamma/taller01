@@ -26,5 +26,8 @@ namespace api.src.Dtos
         [Required]
         [Range(0, 99999, ErrorMessage = "Stock must be a non-negative integer less than 100 thousand.")]
         public int Stock { get; set; }
+
+        [DataType(DataType.Upload)]
+        public IFormFile? Image { get; set; } = null!;
     }
 }
