@@ -57,7 +57,7 @@ namespace taller01.src.Controllers
             }
         }
         [HttpGet("GetReceipt/{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetReceipt(int id)
         {
             try
@@ -89,7 +89,7 @@ namespace taller01.src.Controllers
             }
         }
         [HttpGet("receipts")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetReceipts([FromQuery] QueryObject query)
         {
             try

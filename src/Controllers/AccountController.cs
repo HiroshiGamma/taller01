@@ -32,8 +32,7 @@ namespace taller01.src.Controllers
             _userRepository = userRepository;
         }
         [HttpGet("users")]
-        
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers([FromQuery] QueryObject query)
         {
             if (!ModelState.IsValid)
@@ -102,7 +101,7 @@ namespace taller01.src.Controllers
         /// <param name="enable"> variable booleana encargada de cambiar el estado </param>
         /// <returns> Ok, si el usuario fue cambiado con exito, Error, si no esta autorizado.</returns>
         [HttpPut("enable-disable/{rut}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EnableDisableUser([FromRoute] string rut, [FromBody] bool enable)
         {
             if (!ModelState.IsValid)

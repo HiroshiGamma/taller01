@@ -61,7 +61,7 @@ namespace taller01.src.Repository
                 Username = user.UserName,
                 Email = user.Email,
                 Role = roles.First(),
-                Token = _tokenService.CreateToken(user)
+                Token = await _tokenService.CreateToken(user)
             };
         }
         public async Task<NewUserDto> LoginAsync(LoginDto loginDto)
@@ -92,7 +92,7 @@ namespace taller01.src.Repository
                 Username = user.UserName!,
                 Email = user.Email!,
                 Role = roles.First(),
-                Token = _tokenService.CreateToken(user)
+                Token = await _tokenService.CreateToken(user)
             };
         }
     }

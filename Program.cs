@@ -18,67 +18,67 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 Env.Load();
 
-var issuer =Environment.GetEnvironmentVariable("Issuer");
-var audience =Environment.GetEnvironmentVariable("Audience");
-var signingKey =Environment.GetEnvironmentVariable("SigningKey");
+var cloudName = Environment.GetEnvironmentVariable("CloudinaryName");
+var apiKey = Environment.GetEnvironmentVariable("ApiKey");
+var apiSecret = Environment.GetEnvironmentVariable("ApiSecret");
 
-var cloudinaryName = Environment.GetEnvironmentVariable("CloudinaryName");
-var cloudinaryKey = Environment.GetEnvironmentVariable("ApiKey");
-var cloudinarySecret = Environment.GetEnvironmentVariable("ApiSecret");
-    var cloudinaryAccount = new Account(
-        cloudinaryName,
-        cloudinaryKey,
-        cloudinarySecret
-    );
+
+if (cloudName == null || apiKey == null || apiSecret == null)
+{
+    throw new Exception("Cloudinary settings not found in environment variables.");
+}
+
+var cloudinaryAccount = new Account(cloudName, apiKey, apiSecret);
 var cloudinary = new Cloudinary(cloudinaryAccount);
-builder.Services.AddSingleton(cloudinary);
 
+builder.Services.AddSingleton(cloudinary);
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpContextAccessor(); 
+
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddScoped<IReceiptService, ReceiptService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
+builder.Services.AddScoped<IReceiptService, ReceiptService>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
-builder.Services.AddIdentity<AppUser, IdentityRole>(
-    opt => 
+builder.Services.AddIdentity<AppUser, IdentityRole>(options => 
     {
-        opt.Password.RequireDigit = false;
-        opt.Password.RequireLowercase = false;
-        opt.Password.RequireUppercase = false;
-        opt.Password.RequireNonAlphanumeric = false;
-        opt.Password.RequiredLength = 8;
-    }
-).AddEntityFrameworkStores<ApplicationDBContext>();
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 8;
+    })
+    .AddEntityFrameworkStores<ApplicationDBContext>();
 
-builder.Services.AddAuthentication(opt => {
-    opt.DefaultAuthenticateScheme =
-    opt.DefaultChallengeScheme =
-    opt.DefaultForbidScheme = 
-    opt.DefaultScheme =
-    opt.DefaultSignInScheme =
-    opt.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-
-    }).AddJwtBearer(options => {
-        options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication(
+    options =>
+    {
+        options.DefaultAuthenticateScheme = 
+        options.DefaultChallengeScheme = 
+        options.DefaultForbidScheme =
+        options.DefaultScheme = 
+        options.DefaultSignInScheme = 
+        options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(option => {
+        option.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = issuer,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
             ValidateAudience = true,
-            ValidAudience = audience,
+            ValidAudience = builder.Configuration["JWT:Audience"],
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey ?? throw new ArgumentNullException(signingKey))),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"] ?? "")),
             RoleClaimType = ClaimTypes.Role
         };
     });
-    
+
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
@@ -107,19 +107,18 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-string connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? "Data Source-app.db";
+string connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? "Data Source=app.db";
 builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlite(connectionString));
-builder.Services.AddControllers();
-var app = builder.Build();  
 
-using ( var scope = app.Services.CreateScope()){
+var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDBContext>();
     Seeders.Initialize(services);
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -127,9 +126,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-
-app.MapControllers();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapControllers();
 app.Run();
