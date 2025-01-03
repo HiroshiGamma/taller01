@@ -102,19 +102,7 @@ namespace api.src.data
             return $"https://{subdomain}.{tld}/{path}";
         }
         
-        private static string GenerateRandomString(int length)
-        {
-            const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var random = new Random();
-            var result = new StringBuilder(length);
-            
-            for (int i = 0; i < length; i++)
-            {
-                result.Append(chars[random.Next(chars.Length)]);
-            }
-            
-            return result.ToString();
-        }
+        
         
         private static string GenerateCryptoRandomString(int length)
         {

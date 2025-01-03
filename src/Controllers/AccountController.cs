@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.src.Helpers;
+using api.src.Interface;
+using api.src.Mappers;
 using api.src.Repository;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -9,44 +12,87 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using taller01.src.Dtos;
+using taller01.src.Dtos.User;
 using taller01.src.models;
 
 namespace taller01.src.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,User")]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<AppUser> _signInManager;
+        
 
-        private readonly UserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
 
-        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager, UserRepository userRepository)
+        public AccountController(UserManager<AppUser> userManager, IUserRepository userRepository)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
-            _signInManager = signInManager;
             _userRepository = userRepository;
         }
-
-        [HttpPut("UpdatePassword")]
-        [Authorize(Roles = "Admin,User")]
-        public async Task<IActionResult> UpdatePassword([FromRoute] string id, [FromBody] string oldPassword, string newPassword) 
+        [HttpGet("users")]
+        
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetUsers([FromQuery] QueryObject query)
         {
-            var user = await _userManager.FindByIdAsync(id); 
-            if (user == null)
-            {
-                throw new Exception("Usuario no encontrado");
-            }
-            var changePasswordResult = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
-            if (!changePasswordResult.Succeeded)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            return Ok();
+
+            var users = await _userRepository.GetUsers(query);
+            var usersDto = users.Select(user => user.ToUserDtoFromUser()).ToList();
+
+            return Ok(new
+            {
+                Total = users.Count(),
+                Users = usersDto
+            });
+        }
+        [HttpPut("update-user")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto userDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var user = await _userRepository.UpdateUser(userDto, User);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("update-password")]
+        [Authorize]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserPasswordDto updatePasswordDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _userRepository.UpdatePassword(User, updatePasswordDto.NewPassword, updatePasswordDto.Password, updatePasswordDto.ConfirmPassword);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         
        /// <summary>
@@ -64,7 +110,6 @@ namespace taller01.src.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Aquí validamos si el rol del usuario autenticado es Admin
             var currentUser = await _userManager.GetUserAsync(User);
             if (!await _userManager.IsInRoleAsync(currentUser!, "Admin"))
             {
@@ -75,43 +120,24 @@ namespace taller01.src.Controllers
             return Ok();
         }
 
-        [HttpDelete]
-        [Route("{id}")]
-        [Authorize(Roles = "User")]
-        public async Task<IActionResult> DeleteAccount([FromRoute] string id)
+        [HttpDelete("delete-user")]
+        [Authorize]
+        public async Task<IActionResult> DeleteUser()
         {
-            // Get the current logged-in user
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
+            if (!ModelState.IsValid)
             {
-                return NotFound("User not found");
+                return BadRequest(ModelState);
             }
 
-            // Attempt to delete the user
-            var result = await _userManager.DeleteAsync(user);
-            if (result.Succeeded)
+            try
             {
-                // Log the user out after account deletion
-                await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-
-                return RedirectToAction("AccountDeleted", "Home"); // Redirect to a confirmation page
+                await _userRepository.DeleteUser(User);
+                return Ok();
             }
-
-            // Handle errors
-            foreach (var error in result.Errors)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                return StatusCode(500, ex.Message);
             }
-            
-            return BadRequest("Error"); // Show an error page
-        }
-        [HttpPost("logout")]
-        [Authorize(Roles = "Admin,User")]
-
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return Ok(new { message = "Logged out successfully" });
         }
 
     }

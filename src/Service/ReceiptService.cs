@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.src.models;
 using taller01.src.Interface;
+using taller01.src.models;
 
 namespace taller01.src.Service
 {

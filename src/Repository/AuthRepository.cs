@@ -10,7 +10,7 @@ using taller01.src.models;
 
 namespace taller01.src.Repository
 {
-    public class AuthRepository
+    public class AuthRepository : IAuthRepository
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;

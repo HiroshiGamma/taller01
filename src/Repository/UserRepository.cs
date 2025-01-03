@@ -22,14 +22,17 @@ namespace api.src.Repository
     /// </summary>
     public class UserRepository : IUserRepository
     {
-
+        // ApplicationDbContext para acceder a la base de datos
         private readonly ApplicationDBContext _dataContext;
 
-
+        // UserManager para acceder a los usuarios
         private readonly UserManager<AppUser> _userManager;
         
-
-
+        /// <summary>
+        /// Constructor de la clase
+        /// </summary>
+        /// <param name="dataContext"> instancia de la base de datos </param>
+        /// <param name="userManager"> instancia del userManager </param>
         public UserRepository(ApplicationDBContext dataContext, UserManager<AppUser> userManager)
         {
             _dataContext = dataContext;
@@ -37,7 +40,11 @@ namespace api.src.Repository
 
         }
 
-
+        /// <summary>
+        /// Metodo para obtener los usuarios de forma paginada
+        /// </summary>
+        /// <param name="query"> Objeto que contiene el formato de paginación, busqueda y orden </param>
+        /// <returns> Usuarios que se encuentran en el rango. </returns>
         public async Task<List<AppUser>> GetUsers(QueryObject query)
         {
             var users = _dataContext.Users.AsQueryable();
@@ -60,7 +67,11 @@ namespace api.src.Repository
             return await users.Skip(skipNumber).Take(query.PageSize).ToListAsync();
         }
 
-
+        /// <summary>
+        /// Meotodo para habilitar o deshabilitar un usuario
+        /// </summary>
+        /// <param name="rut"> rut del usuario a cambiar su estado </param>
+        /// <param name="enable"> variable booleana para cambiar </param>
         public async Task EnableDisableUser(string rut, bool enable)
         {
 
@@ -71,9 +82,9 @@ namespace api.src.Repository
                 throw new Exception("User not found");
             }
 
-            user.Enabled = enable;
+            user.Enabled = enable; // Si estás utilizando un campo "Enabled" personalizado, mantenlo.
 
-           
+            // Si el campo Enabled es parte de Identity, necesitarías hacer un poco más con UserManager.
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
@@ -84,6 +95,12 @@ namespace api.src.Repository
         }
 
 
+        /// <summary>
+        /// Metodo para actualizar los datos de un usuario
+        /// </summary>
+        /// <param name="userDto"> Dto, con datos del usuario actualizados </param>
+        /// <param name="currentUser">Usuario actual en el sistema</param>
+        /// <returns>Usuario actualizado</returns>
         public async Task<AppUser?> UpdateUser(UpdateUserDto userDto, ClaimsPrincipal currentUser)
         {
             var user = await _userManager.GetUserAsync(currentUser);
@@ -167,7 +184,6 @@ namespace api.src.Repository
             }
 
             await _dataContext.SaveChangesAsync();
-    }
-    
+        }
     }
 }

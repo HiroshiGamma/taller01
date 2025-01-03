@@ -4,11 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace api.src.Dtos
+namespace taller01.src.Dtos.Product
 {
-    public class CreateProductDto
+    public class CreateProductWithImageDto
     {   
-
         [Required]
         [MaxLength(64, ErrorMessage = "Name must be less than 64 characters")]
         [MinLength(10, ErrorMessage = "Name must be at least 10 characters long")]
@@ -26,6 +25,7 @@ namespace api.src.Dtos
         [Required]
         [Range(0, 99999, ErrorMessage = "Stock must be a non-negative integer less than 100 thousand.")]
         public int Stock { get; set; }
-
+        [Required]
+        public IFormFile? Image { get; set; } = null!;
     }
 }

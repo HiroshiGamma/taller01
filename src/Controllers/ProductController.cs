@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.src.data;
 using api.src.Dtos;
+using api.src.Helpers;
 using api.src.Mappers;
 using api.src.models;
 using CloudinaryDotNet;
@@ -11,7 +12,8 @@ using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using taller01.src.Dtos;
-using taller01.src.Interfaces;
+using taller01.src.Dtos.Product;
+using taller01.src.Interface;
 using taller01.src.Mappers;
 using taller01.src.Repository;
 
@@ -19,15 +21,12 @@ namespace taller01.src.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
-        private readonly Cloudinary _cloudinary;
-        public ProductController(IProductRepository productRepository,  Cloudinary cloudinary)
+        public ProductController(IProductRepository productRepository)
         {
             _productRepository = productRepository;
-            _cloudinary = cloudinary;
         }
     
         // Retrieves a list of products based on the provided filters and order.
@@ -35,35 +34,20 @@ namespace taller01.src.Controllers
         // - productDto: DTO containing product filters (Name, Type).
         // - order: Optional order parameter to sort products by price (asc or desc).
         [HttpGet]
-        public IActionResult Get([FromQuery] ProductDto productDto, string? order)
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            var productsQuery = _productRepository.GetAsQuery(productDto.Name, productDto.Type, order);
-
-            if (!string.IsNullOrEmpty(productDto.Name))
+            if (!ModelState.IsValid) 
             {
-                productsQuery = productsQuery.Where(p => p.Name.Contains(productDto.Name));
+                return BadRequest(ModelState); 
             }
 
-            if (!string.IsNullOrEmpty(productDto.Type))
+            var products = await _productRepository.GetAll(query); 
+            var productDto = products.Select(p => p.ToProductDto()); 
+            return Ok(new 
             {
-                productsQuery = productsQuery.Where(p => p.Type == productDto.Type);
-            }
-
-            if (order == "asc")
-            {
-                productsQuery = productsQuery.OrderBy(p => p.Price);
-            }
-            else if (order == "desc")
-            {
-                productsQuery = productsQuery.OrderByDescending(p => p.Price);
-            }
-
-            var products = productsQuery
-                .Where(p => p.Stock > 0)
-                .ToList()
-                .Select(p => p.ToProductDto());
-
-            return Ok(products);
+                Total = products.Count(), 
+                Data = productDto 
+            });
         }
 
         // Retrieves a product by its ID.
@@ -79,7 +63,7 @@ namespace taller01.src.Controllers
             {
                 return NotFound();
             }
-            return Ok(product);
+            return Ok(product.ToProductDto());
         }
 
         // Creates a new product.
@@ -88,38 +72,18 @@ namespace taller01.src.Controllers
         [HttpPost]
         [Consumes("multipart/form-data")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> postAsync([FromForm] CreateProductDto createProductDto)
+        public async Task<IActionResult> PostAsync([FromForm] CreateProductWithImageDto createProductDto)
         {
-            if (createProductDto.Image == null || createProductDto.Image.Length == 0) 
+            var productModel = new Product
             {
-                return BadRequest("Image is required");
-            }
-            if (createProductDto.Image.ContentType != "image/png" && createProductDto.Image.ContentType != "image/jpeg")
-            {
-                return BadRequest("Only PNG and JPG images are allowed.");
-            }
-            if (createProductDto.Image.Length > 10 * 1024 * 1024)
-            {
-                    return BadRequest("Image size must not exceed 10 MB.");
-            }
-
-            var uploadParams = new ImageUploadParams
-            {
-                File = new FileDescription(createProductDto.Image.FileName, createProductDto.Image.OpenReadStream()),
-                Folder = "product_images"
+                Name = createProductDto.Name,
+                Price = createProductDto.Price,
+                Stock = createProductDto.Stock,
+                Type = createProductDto.Type
             };
+            await _productRepository.Post(productModel, createProductDto.Image); 
 
-            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
-            if (uploadResult.Error != null)
-            {
-                return BadRequest(uploadResult.Error.Message);
-            }
-            
-            var product = createProductDto.ToProductFromCreateDto(uploadResult.SecureUrl.AbsoluteUri);
-
-            await _productRepository.Post(product);
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+            return CreatedAtAction(nameof(GetById), new { id = productModel.Id }, productModel.ToProductDto());
         }
 
         // Updates an existing product by its ID.
@@ -131,12 +95,28 @@ namespace taller01.src.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UpdateProductDto updateProductDto)
         {
-            var productModel = await _productRepository.Put(id, updateProductDto);
-            if (productModel == null)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var existingProduct = await _productRepository.GetById(id);
+            if (existingProduct == null)
+                return NotFound("Product not found");
+
+            existingProduct.Name = updateProductDto.Name;
+            existingProduct.Price = updateProductDto.Price;
+            existingProduct.Stock = updateProductDto.Stock;
+            existingProduct.Type = updateProductDto.Type;
+
+            if (updateProductDto.Image != null)
             {
-                return NotFound();
+                await _productRepository.UpdateImage(existingProduct, updateProductDto.Image); 
             }
-            return Ok(productModel);
+            var updatedProduct = await _productRepository.Put(id, updateProductDto);
+            
+            if (updatedProduct == null)
+                return NotFound("Product not found"); 
+
+            return Ok(updatedProduct.ToProductDto());
         }
 
         // Deletes a product by its ID.

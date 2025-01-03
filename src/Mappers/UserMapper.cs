@@ -4,38 +4,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using taller01.src.models;
 using taller01.src.Dtos;
+using api.src.Dtos.User;
 
 namespace api.src.Mappers
 {
     public static class UserMapper
     {
-        public static AppUser ToAppUserFromLoginDto(this LoginDto loginDto)
+        public static UserDto ToUserDtoFromUser(this AppUser user)
         {
-            return new AppUser
+            return new UserDto
             {
-                UserName = loginDto.UserName,
-
-            };
-        }
-
-        public static AppUser ToAppUserFromNewUserDto(this NewUserDto newUserDto)
-        {
-            return new AppUser
-            {
-                UserName = newUserDto.Username,
-                Email = newUserDto.Email,
-
-            };
-        }
-
-        public static AppUser ToAppUserFromRegisterDto(this RegisterDto registerDto)
-        {
-            return new AppUser
-            {
-                UserName = registerDto.Username,
-                Rut = registerDto.Rut,
-                DateOfBirth = registerDto.Birthdate,
-                Email = registerDto.Email,
+                Id = user.Id,
+                Rut = user.Rut,
+                Name = user.UserName!,
+                Birthdate = user.DateOfBirth,
+                Email = user.Email!,
+                Gender = user.Gender,
+                Enabled = user.Enabled
             };
         }
     }
