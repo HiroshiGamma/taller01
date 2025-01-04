@@ -110,7 +110,18 @@ builder.Services.AddSwaggerGen(option =>
 string connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? "Data Source=app.db";
 builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlite(connectionString));
 
+
 var app = builder.Build();
+
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
+}
 
 using (var scope = app.Services.CreateScope())
 {
@@ -118,6 +129,7 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<ApplicationDBContext>();
     Seeders.Initialize(services);
 }
+
 
 if (app.Environment.IsDevelopment())
 {

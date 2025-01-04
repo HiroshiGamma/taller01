@@ -43,11 +43,7 @@ namespace taller01.src.Controllers
 
             var products = await _productRepository.GetAll(query); 
             var productDto = products.Select(p => p.ToProductDto()); 
-            return Ok(new 
-            {
-                Total = products.Count(), 
-                Data = productDto 
-            });
+            return Ok(products);
         }
 
         // Retrieves a product by its ID.
