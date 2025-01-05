@@ -88,8 +88,9 @@ namespace taller01.src.Controllers
         // - updateProductDto: DTO containing updated product details.
         [HttpPut]
         [Route("{id:int}")]
+        [Consumes("multipart/form-data")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UpdateProductDto updateProductDto)
+        public async Task<IActionResult> Put([FromRoute] int id, [FromForm] UpdateProductDto updateProductDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
