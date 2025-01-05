@@ -95,12 +95,9 @@ namespace taller01.src.Controllers
             try
             {
                 var (receipts, totalCount) = await _receiptRepository.GetReceiptsAsync(query);
+            
 
-                return Ok(new
-                {
-                    TotalCount = totalCount,
-                    Receipts = receipts
-                });
+                return Ok(receipts);
             }
             catch (Exception ex)
             {

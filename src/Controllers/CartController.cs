@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.src.Dtos.Cart;
+using api.src.Dtos.Receipt;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using taller01.src.Dtos.Cart;
 using taller01.src.Interface;
 
 namespace taller01.src.Controllers
@@ -15,10 +18,12 @@ namespace taller01.src.Controllers
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
-        public CartController(ICartRepository cartRepository, IProductRepository productRepository)
+        private readonly IReceiptService _receiptService;
+        public CartController(ICartRepository cartRepository, IProductRepository productRepository, IReceiptService receiptService)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
+            _receiptService = receiptService;
         }
         [HttpGet]
         public async Task<IActionResult> GetCartAsync()
@@ -69,6 +74,46 @@ namespace taller01.src.Controllers
             {
                 _cartRepository.RemoveFromCart(productId);
                 return Ok($"Producto con {productId} eliminado del carrito");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpPost("checkout")]
+        [Authorize(Roles = "User") ]
+        public async Task<IActionResult> Checkout([FromForm] CheckoutDto checkoutDto)
+        {
+            try
+            {
+                var receipt = await _receiptService.CreateReceipt(
+                    checkoutDto.UserRut,
+                    checkoutDto.Country,
+                    checkoutDto.City,
+                    checkoutDto.Commune,
+                    checkoutDto.Street
+                );
+
+                var receiptDto = new ReceiptDto
+                {
+                    Id = receipt.Id,
+                    UserRut = receipt.UserRut,
+                    Country = receipt.Country,
+                    City = receipt.City,
+                    Commune = receipt.Commune,
+                    Street = receipt.Street,
+                    Date = receipt.Date,
+                    Items = receipt.Items.Select(i => new ReceiptItemDto
+                    {
+                        ProductId = i.ProductId,
+                        Quantity = i.Quantity,
+                        Price = i.Price,
+                        Total = i.Total
+                    }).ToList(),
+                    Total = receipt.Total
+                };
+                await _cartRepository.ClearCart();
+                return Ok(receiptDto);
             }
             catch (Exception ex)
             {

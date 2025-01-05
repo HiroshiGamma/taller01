@@ -12,5 +12,6 @@ namespace taller01.src.Interface
         public Task<Cart> GetCart();
         public Task AddToCart(int productId);
         public Task RemoveFromCart(int productId);
+        public Task ClearCart();
     }
 }

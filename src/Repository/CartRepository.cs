@@ -146,5 +146,9 @@ namespace taller01.src.Repository
             Console.WriteLine($"Removing product {productId} from cart"); // Debug line
             await RemoveProductFromCart(productId);
         }
+        public async Task ClearCart()
+        {
+            _httpContextAccessor.HttpContext!.Response.Cookies.Delete("ShoppingCart");
+        }
     }
 }

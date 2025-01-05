@@ -30,7 +30,10 @@ namespace api.src.data
                         .RuleFor(p => p.Type, f => f.PickRandom(new[] { "Poleras", "Gorros", "Juguetería", "Alimentación", "Libros" }))
                         .RuleFor(p => p.Price, f => f.Random.Int(1000, 99999999))
                         .RuleFor(p => p.Stock, f => f.Random.Int(0, 99999))
-                        .RuleFor(p => p.ImageUrl, f => GenerateSecureRandomUrl(8,12));
+                        .RuleFor(p => p.ImageUrl, f => f.PickRandom(new[] { "https://res.cloudinary.com/dt8dw9v57/image/upload/v1736113835/products_images/sqsuy7q2peselsj4j15w.jpg",
+                         "https://res.cloudinary.com/dt8dw9v57/image/upload/v1736113890/products_images/ikkj8n2rr24ks7qfvk91.jpg", 
+                         "https://res.cloudinary.com/dt8dw9v57/image/upload/v1736113930/products_images/vkb8wbaohewy1rrxwaij.jpg", 
+                         "https://res.cloudinary.com/dt8dw9v57/image/upload/v1736114002/products_images/dlmtvr6wvkwh6jp2pwbc.jpg"}));
 
                     var products = productFaker.Generate(10);
                     context.Products.AddRange(products);
