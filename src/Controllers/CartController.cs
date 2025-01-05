@@ -47,18 +47,15 @@ namespace taller01.src.Controllers
             }
         }
         [HttpPost("add")]
-        public IActionResult AddToCart([FromBody] int productId)
+        public async Task<IActionResult> AddToCartAsync([FromBody] int productId)
         {
             try
             {
-                var product = _productRepository.GetById(productId);
-                if (product == null)
-                {
-                    return NotFound();
-                }
-
-                _cartRepository.AddToCart(productId);
-                return Ok("Producto agregado al carrito");
+                Console.WriteLine($"Adding product {productId} to cart"); // Debug line
+                await _cartRepository.AddToCart(productId);
+                var cart = await _cartRepository.GetCart(); // Get updated cart
+                Console.WriteLine($"Cart now has {cart.Items.Count} items"); // Debug line
+                return Ok(new { message = "Product added to cart", cartItemCount = cart.Items.Count });
             }
             catch (Exception ex)
             {
